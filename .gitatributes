@@ -1,0 +1,3 @@
+*.sln text eol=lf
+*.user text eol=lf
+*.txt text eol=lf
