@@ -1,0 +1,105 @@
+<Window x:Class="ShippingCompany.app.view.MainWindow"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:viewModels="clr-namespace:ShippingCompany.app.view_model" 
+                    mc:Ignorable="d"
+                    Height="350" 
+                    Width="470"
+                    MinHeight="350" 
+                    MinWidth="470">
+    <Window.DataContext>
+        <viewModels:MainWindowViewModel></viewModels:MainWindowViewModel>
+    </Window.DataContext>
+    <Grid Background="#FFB9D1EA">
+        <StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="117*"/>
+                    <RowDefinition Height="257*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Заголовок -->
+                <StackPanel Grid.Row="0" Height="33" Background="White" Margin="0, 0, 0, 0" VerticalAlignment="Top">
+                    <Label Content="АИС СУДОХОДНАЯ КОМПАНИЯ" 
+                           HorizontalAlignment="Right" 
+                           VerticalAlignment="Center"
+                           FontWeight="Bold" />
+                </StackPanel>
+
+                <StackPanel VerticalAlignment="Top" Height="33" Background="#FFFBFF2D" Margin="0,38,0,0">
+                    <Label Content="" HorizontalContentAlignment="Right"
+                           Height="32" VerticalAlignment="Top"
+                           HorizontalAlignment="Right" 
+                           VerticalContentAlignment="Center"
+                           Background="{x:Null}"/>
+                </StackPanel>
+                <StackPanel Height="33"
+                            VerticalAlignment="Top" 
+                            Background="White" 
+                            Margin="0,76,0,0">
+                    <Label Content="Введите имя пользователя и пароль" 
+                           HorizontalContentAlignment="Right" 
+                           Height="32" VerticalAlignment="Top" 
+                           HorizontalAlignment="Right" 
+                           VerticalContentAlignment="Center"/>
+                </StackPanel >
+                <!-- Основная часть с текстовыми полями и кнопками -->
+                <Label Grid.Row="1" Content="Имя пользователя" 
+                       HorizontalAlignment="Left" 
+                       Margin="18,47,0,0" 
+                       VerticalAlignment="Top" Height="40" 
+                       Width="137"/>
+                <TextBox Grid.Row="1" 
+                         Text="{Binding Username}" 
+                         Width="238" Height="30" 
+                         VerticalAlignment="Top"
+                         Margin="190,40,0,0"/>
+                <Label Content="Пароль" 
+                       HorizontalAlignment="Left" 
+                       Margin="18,92,0,0" 
+                       VerticalAlignment="Top" Grid.Row="1" 
+                       Height="35" Width="84"/>
+                <PasswordBox PasswordChanged="PasswordBox_OnPasswordChanged"
+                             HorizontalAlignment="Left" 
+                             Margin="212,87,0,0" 
+                             VerticalAlignment="Top" 
+                             Width="238" Height="30" 
+                             Grid.Row="1"/>
+                <StackPanel Grid.Row="1" >
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0, 130">
+                        <Button Content="Вход" 
+                                Command="{Binding AuthorizeButton}" 
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                Width="94"
+                                HorizontalAlignment="Left"
+                                Margin="70, 30"/>
+                        <Button Content="Отмена"
+                                Command="{Binding CancelButton}" 
+                                Width="94" 
+                                HorizontalAlignment="Left" 
+                                Margin="90,0,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <Label Grid.Row="1" x:Name="CapsLockLabel" 
+                       HorizontalAlignment="Left" 
+                       VerticalAlignment="Top"
+                       Height="36" 
+                       Width="194"
+                       Margin="30, 200"/>
+                <Label Grid.Row="1" x:Name="InputLanguageLabel" 
+                       HorizontalAlignment="Right"
+                       Height="36" 
+                       Width="224" 
+                       Margin="30, 200"/>
+                
+                <!-- Изображение -->
+                <Image HorizontalAlignment="Left" Height="71" 
+                       VerticalAlignment="Top" Width="75" 
+                       Source="/Images/keys.png"/>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>
