@@ -58,56 +58,87 @@ public class MainWindowViewModel: BaseViewModel
     
     private void Authorize(object parameter)
     {
-        try
+        User user = _userCrud.ReadByLogin(Username);
+        if (user != null)
         {
-            User user = _userCrud.ReadByLogin(Username);
-            if (user != null)
-            {
-                CurrentUser.Instance.User = user;
-                var currentUser = CurrentUser.Instance.User;
+            CurrentUser.Instance.User = user;
+            var currentUser = CurrentUser.Instance.User;
 
-                var hashedPassword = User.HashPassword(Password, user.Salt);
-                if (hashedPassword == currentUser.PasswordHash)
+            var hashedPassword = User.HashPassword(Password, user.Salt);
+            if (hashedPassword == currentUser.PasswordHash)
+            {
+                // Console.WriteLine(user);
+                // WorkWindow workWindow = new WorkWindow(user);
+                // workWindow.Show();
+                // Application.Current.MainWindow.Close();
+                // workWindow.Closed += (s, args) => Application.Current.MainWindow.Close();
+                try
                 {
-                    try
-                    {
-                        WorkWindow workWindow = new WorkWindow();
-                        workWindow.Show();
-                        Application.Current.MainWindow.Close();
-                        workWindow.Closed += (s, args) => Application.Current.MainWindow.Close();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        throw;
-                    }
+                    Console.WriteLine(user);
+                    WorkWindow workWindow = new WorkWindow(user);
+                    workWindow.Show();
+                    Application.Current.MainWindow.Close();
+                    workWindow.Closed += (s, args) => Application.Current.MainWindow.Close();
                 }
-                else
+                catch (Exception e)
                 {
-                    MessageBox.Show("Неправильный пароль");
+                    Console.WriteLine(e);
+                    throw;
                 }
             }
             else
             {
-                MessageBox.Show("Неправильный логин");
+                MessageBox.Show("Неправильный пароль");
             }
         }
-        catch (Exception ex)
+        else
         {
-            MessageBox.Show($"Ошибка при авторизации: {ex.Message}");
+            MessageBox.Show("Неправильный логин");
         }
-    }
-    private void OpenWorkWindow(object obj)
-    {
-        // Открываем новое окно
-        var workWindow = new WorkWindow();
-        workWindow.Show();
-
-        // Закрываем текущее окно (MainControl)
-        if (obj is Window window)
-        {
-            window.Close();
-        }
+        // try
+        // {
+        //     User user = _userCrud.ReadByLogin(Username);
+        //     if (user != null)
+        //     {
+        //         CurrentUser.Instance.User = user;
+        //         var currentUser = CurrentUser.Instance.User;
+        //
+        //         var hashedPassword = User.HashPassword(Password, user.Salt);
+        //         if (hashedPassword == currentUser.PasswordHash)
+        //         {
+        //             Console.WriteLine(user);
+        //             WorkWindow workWindow = new WorkWindow(user);
+        //             workWindow.Show();
+        //             Application.Current.MainWindow.Close();
+        //             workWindow.Closed += (s, args) => Application.Current.MainWindow.Close();
+        //             // try
+        //             // {
+        //             //     Console.WriteLine(user);
+        //             //     WorkWindow workWindow = new WorkWindow(user);
+        //             //     workWindow.Show();
+        //             //     Application.Current.MainWindow.Close();
+        //             //     workWindow.Closed += (s, args) => Application.Current.MainWindow.Close();
+        //             // }
+        //             // catch (Exception e)
+        //             // {
+        //             //     Console.WriteLine(e);
+        //             //     throw;
+        //             // }
+        //         }
+        //         else
+        //         {
+        //             MessageBox.Show("Неправильный пароль");
+        //         }
+        //     }
+        //     else
+        //     {
+        //         MessageBox.Show("Неправильный логин");
+        //     }
+        // }
+        // catch (Exception ex)
+        // {
+        //     MessageBox.Show($"Ошибка при авторизации: {ex.Message}");
+        // }
     }
 
     private void CloseApplication(object obj)

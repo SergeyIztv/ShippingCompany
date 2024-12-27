@@ -9,7 +9,7 @@ namespace ShippingCompany.data.crud;
 
 public class BaseCrud<T> : IBaseCrud<T> where T : class
 {
-    private readonly ShippingCompanyDbContext _context;
+    protected readonly ShippingCompanyDbContext _context;
     protected readonly DbSet<T> _entities;
 
     protected BaseCrud()

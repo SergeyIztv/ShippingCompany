@@ -8,40 +8,46 @@
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              x:Name="RootControl"
              MinHeight="400" MinWidth="800">
-    <UserControl.DataContext>
-        <viewModels:WorkWindowViewModel></viewModels:WorkWindowViewModel>
-    </UserControl.DataContext>
+    
     <Grid >
-        <TabControl>
+        <TabControl SelectedIndex="{Binding  UserSelectedTabIndex}">
             <!-- Tab for Users List -->
             <TabItem Header="Список пользователей">
                 <Grid>
-                    <ListView ItemsSource="{Binding Users}"
-                              SelectedItem="{Binding SelectedUser, Mode=TwoWay}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Пользователь: "
-                                               Margin="0,0,5,0"
-                                               FontSize="20"/>
-                                    <TextBlock Text="{Binding  Login}"
-                                               FontSize="20"/>
-                                    <StackPanel.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Удалить"
-                                                      Command="{Binding }">
-                                            </MenuItem>
-                                        </ContextMenu>
-                                    </StackPanel.ContextMenu>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                    <StackPanel>
+                        <TextBlock Text="Введите логин для поиска:"
+                                   Margin="10, 25, 0, 0"
+                                   FontSize="15"/>
+                        <!-- Search Bar -->
+                        <StackPanel Orientation="Horizontal" Margin="10">
+                            <TextBox Width="200"
+                                     Text="{Binding SearchLogin, UpdateSourceTrigger=PropertyChanged}"
+                                     FontSize="15"/>
+                        </StackPanel>
+
+                        <!-- Users List -->
+                        <ListView ItemsSource="{Binding FilteredUsers}"
+                                  SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
+                                  Margin="10, 25, 0, 0">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Пользователь: "
+                                                   Margin="0,0,5,0"
+                                                   FontSize="20"/>
+                                        <TextBlock Text="{Binding Login}"
+                                                   FontSize="20"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
                 </Grid>
             </TabItem>
             
             <!-- Tab for User Editing -->
-            <TabItem Header="Редактирование пользователя">
+            <TabItem Header="Редактировать пользователя"
+                     IsEnabled="{Binding IsUserSelected}">
                 <Grid Margin="30, 50">
                     <TextBlock Text="Редактировать пользователя: "
                                FontSize="25"
@@ -62,6 +68,15 @@
                             Content="Сохранить изменения"
                             Command="{Binding SaveChangesUserButton}"/>
                 </Grid>
+            </TabItem>
+            
+            <TabItem Header="Удалить пользователя"
+                     IsEnabled="{Binding IsUserSelected}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="GotFocus">
+                        <b:InvokeCommandAction Command="{Binding DeleteUserButton}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
             </TabItem>
             
             <!-- Tab for Adding User -->

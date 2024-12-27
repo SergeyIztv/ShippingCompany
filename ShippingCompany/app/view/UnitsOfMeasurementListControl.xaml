@@ -1,35 +1,33 @@
-<UserControl x:Class="ShippingCompany.app.view.StreetsListControl"
+<UserControl x:Class="ShippingCompany.app.view.UnitsOfMeasurementListControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:ShippingCompany.app.view"
-             xmlns:viewModels="clr-namespace:ShippingCompany.app.view_model"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch">
     
     <Grid>
-        <TabControl SelectedIndex="{Binding StreetSelectedTabIndex}">
-            <TabItem Header="Список улиц">
+        <TabControl SelectedIndex="{Binding UnitOfMeasurementSelectedTabIndex}">
+            <TabItem Header="Список единиц измерения">
                 <Grid>
                     <StackPanel>
-                        <TextBlock Text="Введите название улицы для поиска"
+                        <TextBlock Text="Введите название для поиска"
                                    Margin="10, 25, 0, 0"
                                    FontSize="15"/>
                         <StackPanel Orientation="Horizontal"
                                     Margin="10">
                             <TextBox Width="200"
-                                     Text="{Binding  SearchStreetName, UpdateSourceTrigger=PropertyChanged}"
+                                     Text="{Binding  SearchUnitOfMeasurementName, UpdateSourceTrigger=PropertyChanged}"
                                      FontSize="15"/>
                         </StackPanel>
-                        <ListView ItemsSource="{Binding FilteredStreets}"
-                                  SelectedItem="{Binding SelectedStreet, Mode=TwoWay}"
+                        <ListView ItemsSource="{Binding FilteredUnitsOfMeasurement}"
+                                  SelectedItem="{Binding SelectedUnitOfMeasurement, Mode=TwoWay}"
                                   Margin="10, 25, 0, 0">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Улица: "
+                                        <TextBlock Text="Единица измерения: "
                                                    Margin="0,0,5,0"
                                                    FontSize="20"/>
                                         <TextBlock Text="{Binding Name}"
@@ -42,43 +40,10 @@
                 </Grid>
             </TabItem>
             
-            <TabItem Header="Редактировать улицу"
-                     IsEnabled="{Binding IsStreetSelected}">
+            <TabItem Header="Редактировать единицу измерения"
+                     IsEnabled="{Binding IsUnitOfMeasurementSelected}">
                 <Grid Margin="30, 50">
-                    <TextBlock Text="Редактировать улицу: "
-                               FontSize="25"
-                               Margin="30, 0"/>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Название улицы: "
-                                   FontSize="15"
-                                   Margin="30, 60, 0, 0"
-                                   Height="30"
-                                   VerticalAlignment="Top"/>
-                        <TextBox Width="238" Height="30"
-                                 Text="{Binding StreetName}"
-                                 Margin="5,50, 0,0"
-                                 VerticalAlignment="Top"/>
-                    </StackPanel>
-                    <Button Width="200"
-                            Background="Red"
-                            Content="Сохранить изменения"
-                            Command="{Binding SaveChangesStreetButton}"
-                            Margin="0, 150"/>
-                </Grid>
-            </TabItem>
-            
-            <TabItem Header="Удалить улицу"
-                     IsEnabled="{Binding IsStreetSelected}">
-                <b:Interaction.Triggers>
-                    <b:EventTrigger EventName="GotFocus">
-                        <b:InvokeCommandAction Command="{Binding DeleteStreetButton}" />
-                    </b:EventTrigger>
-                </b:Interaction.Triggers>
-            </TabItem>
-            
-            <TabItem Header="Добавить улицу">
-                <Grid Margin="30, 50">
-                    <TextBlock Text="Добавить улицу: "
+                    <TextBlock Text="Редактировать единицу измерения: "
                                FontSize="25"
                                Margin="30, 0"/>
                     <StackPanel Orientation="Horizontal">
@@ -88,7 +53,40 @@
                                    Height="30"
                                    VerticalAlignment="Top"/>
                         <TextBox Width="238" Height="30"
-                                 Text="{Binding StreetName}"
+                                 Text="{Binding UnitOfMeasurementName}"
+                                 Margin="5,50, 0,0"
+                                 VerticalAlignment="Top"/>
+                    </StackPanel>
+                    <Button Width="200"
+                            Background="Red"
+                            Content="Сохранить изменения"
+                            Command="{Binding SaveChangesUnitOfMeasurementButton}"
+                            Margin="0, 150"/>
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="Удалить единицу измерения"
+                     IsEnabled="{Binding IsUnitOfMeasurementSelected}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="GotFocus">
+                        <b:InvokeCommandAction Command="{Binding DeleteUnitOfMeasurementButton}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </TabItem>
+            
+            <TabItem Header="Добавить единицу измерения">
+                <Grid Margin="30, 50">
+                    <TextBlock Text="Добавить единицу измерения: "
+                               FontSize="25"
+                               Margin="30, 0"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Название: "
+                                   FontSize="15"
+                                   Margin="30, 60, 0, 0"
+                                   Height="30"
+                                   VerticalAlignment="Top"/>
+                        <TextBox Width="238" Height="30"
+                                 Text="{Binding UnitOfMeasurementName}"
                                  Margin="5,50, 0,0"
                                  VerticalAlignment="Top"/>
                     </StackPanel>
@@ -97,7 +95,7 @@
                             Margin="50, 250, 0,0"
                             VerticalAlignment="Top"
                             Width="130"
-                            Command="{Binding CreateStreetButton}"/>
+                            Command="{Binding CreateUnitOfMeasurementButton}"/>
                 </Grid>
             </TabItem>
         </TabControl>

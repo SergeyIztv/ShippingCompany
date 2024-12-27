@@ -10,6 +10,8 @@ namespace ShippingCompany.domain.entities
         public long Id { get; set; }
         [Column("Name")]
         public string Name { get; set; }
+        [Column("ShipmentId")]
+        public long? ShipmentId { get; set; }
         [Column("TypeOfCargoId")]
         public long? TypeOfCargoId { get; set; } // Id тип груза
         [Column("UnitOfMeasurementId")]
@@ -22,9 +24,6 @@ namespace ShippingCompany.domain.entities
         // Навигационные свойства
         public virtual TypeOfCargo TypeOfCargo { get; set; } // Отношение с TypeOfCargo
         public virtual UnitOfMeasurement UnitOfMeasurement { get; set; } // Отношение с UnitOfMeasurement
-        
-        // Навигационное свойство для доступа к связанным CargoShipments
-        public virtual ICollection<CargoShipment> CargoShipments { get; set; } = new List<CargoShipment>();
 
         // Пустой конструктор
         public Cargo() {}

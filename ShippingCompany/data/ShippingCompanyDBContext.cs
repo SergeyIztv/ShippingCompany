@@ -1,9 +1,11 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ShippingCompany.domain.entities;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using ShippingCompany.Domain.Entities;
 
 namespace ShippingCompany.data;
@@ -26,7 +28,6 @@ public class ShippingCompanyDbContext: DbContext
     public DbSet<Voyage> Voyages { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<MenuItem> MenuItems { get; set; }
-    public DbSet<CargoShipment> CargoShipments { get; set; }
     public DbSet<ShipTypeOfCargo> ShipTypeOfCargos { get; set; }
     public DbSet<UserMenuItem> UserMenuItems { get; set; }
     public DbSet<VoyagePort> VoyagePorts { get; set; }
@@ -81,26 +82,16 @@ public class ShippingCompanyDbContext: DbContext
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            
+            optionsBuilder.UseLazyLoadingProxies()
+                .UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+                .LogTo(Console.WriteLine, LogLevel.Information);;
         }
+        
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Настройка связи многие ко многим для сущностей Cargo и Shipment
-        modelBuilder.Entity<CargoShipment>()
-            .HasKey(cs => new { cs.CargoId, cs.ShipmentId }); // Композитный ключ
-        
-        modelBuilder.Entity<CargoShipment>() // Определение отношений между Cargo и CargoShipment 
-            .HasOne(cs => cs.Cargo)
-            .WithMany(c => c.CargoShipments)
-            .HasForeignKey(cs => cs.CargoId);
-        
-        modelBuilder.Entity<CargoShipment>() // // Определение отношений между Shipment и CargoShipment
-            .HasOne(cs => cs.Shipment)
-            .WithMany(s => s.CargoShipments)
-            .HasForeignKey(cs => cs.ShipmentId);
-        
         // Настройка связи многие ко многим для сущностей Ship и TypeOfCargo
         modelBuilder.Entity<ShipTypeOfCargo>()
             .HasKey(cs => new { cs.ShipId, cs.TypeOfCargoId }); // Композитный ключ

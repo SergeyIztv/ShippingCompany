@@ -9,6 +9,10 @@ namespace ShippingCompany.domain.entities
     {
         [Column("Id")]
         public long Id { get; set; }
+        [Column("DepartureDate")]
+        public DateTime? DepartureDate { get; set; } // Дата убытия
+        [Column("ArrivalDate")]
+        public DateTime? ArrivalDate { get; set; } // Дата прибытия
         [Column("ShipId")]
         public long? ShipId { get; set; } // Идентификатор судна
         [Column("DestinatinPortId")]
@@ -28,8 +32,10 @@ namespace ShippingCompany.domain.entities
         public Voyage(){}
 
         // Конструктор с параметрами
-        public Voyage(long? shipId, long? destinationPortId, long? sourcePortId)
+        public Voyage(DateTime? departureDate, DateTime? arrivalDate, long? shipId, long? destinationPortId, long? sourcePortId)
         {
+            DepartureDate = departureDate;
+            ArrivalDate = arrivalDate;
             ShipId = shipId;
             DestinationPortId = destinationPortId;
             SourcePortId = sourcePortId;

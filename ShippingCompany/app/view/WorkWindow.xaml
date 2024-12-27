@@ -9,10 +9,8 @@
                             xmlns:reactiveUi="http://reactiveui.net"
                             mc:Ignorable="d"
                             HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch">
-    <Window.DataContext>
-        <viewModels:WorkWindowViewModel />
-    </Window.DataContext>
+                            VerticalAlignment="Stretch"
+                            WindowState="Maximized">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -35,16 +33,21 @@
                               Command="{Binding UsersButton}"/>
                     <MenuItem Header="Города" 
                               Command="{Binding TownsButton}"/>
-                    <MenuItem Header="Улицы" />
-                    <MenuItem Header="Порты" />
-                    <MenuItem Header="Банки" />
-                    <MenuItem Header="Суда" />
-                    <MenuItem Header="Типы грузов" />
-                    <MenuItem Header="Единицы измерения грузов" />
+                    <MenuItem Header="Улицы" 
+                              Command="{Binding StreetsButton}"/>
+                    <MenuItem Header="Порты" 
+                              Command="{Binding PortsButton}"/>
+                    <MenuItem Header="Банки" 
+                              Command="{Binding BanksButton}"/>
+                    <MenuItem Header="Суда" 
+                              Command="{Binding ShipsButton}"/>
+                    <MenuItem Header="Типы грузов" 
+                              Command="{Binding TypesOfCargoButton}"/>
+                    <MenuItem Header="Единицы измерения грузов" 
+                              Command="{Binding UnitOfMeasurementButton}"/>
                 </MenuItem>
-                <MenuItem Header="Рейсы" >
-    
-                </MenuItem>
+                <MenuItem Header="Рейсы" 
+                          Command="{Binding VoyageButton}"/>
                 <MenuItem Header="Клиенты" >
     
                 </MenuItem>
@@ -78,12 +81,48 @@
               Visibility="{Binding UsersListControlVisible}">
             <local:UsersListControl Margin="0,30,0,0"
                                     HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"/>
+                                    VerticalAlignment="Stretch"
+                                    DataContext="{Binding}"/>
         </Grid>
         
         <local:TownsListControl Grid.Row="1" Margin="0,30,0,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Visibility="{Binding TownsListControlVisible}"/>
+        <local:StreetsListControl Grid.Row="1"
+                                  Margin="0, 30, 0, 0"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
+                                  Visibility="{Binding StreetsListControlVisible}"/>
+        <local:BanksListControl Grid.Row="1"
+                                  Margin="0, 30, 0, 0"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
+                                  Visibility="{Binding BanksListControlVisible}"/>
+        <local:PortsListControl Grid.Row="1"
+                                Margin="0, 30, 0, 0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Visibility="{Binding PortsListControlVisible}"/>
+        <local:ShipsListControl Grid.Row="1"
+                                Margin="0, 30, 0, 0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Visibility="{Binding ShipsListControlVisible}"/>
+        <local:TypesOfCargoListControl Grid.Row="1"
+                                Margin="0, 30, 0, 0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Visibility="{Binding TypesOfCargoListControlVisible}"/>
+        <local:UnitsOfMeasurementListControl Grid.Row="1"
+                                       Margin="0, 30, 0, 0"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"
+                                       Visibility="{Binding UnitOfMeasurementListControlVisible}"/>
+        <local:VoyageGridControl Grid.Row="1"
+                                Margin="0, 30, 0, 0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Visibility="{Binding VoyagesGridControlVisible}"/>
     </Grid>
 </Window>

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ShippingCompany.data;
@@ -11,9 +12,11 @@ using ShippingCompany.data;
 namespace ShippingCompany.Migrations
 {
     [DbContext(typeof(ShippingCompanyDbContext))]
-    partial class ShippingCompanyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241224122925_DeleteCargoShipment")]
+    partial class DeleteCargoShipment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

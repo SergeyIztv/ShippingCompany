@@ -1,0 +1,592 @@
+<UserControl x:Class="ShippingCompany.app.view.VoyageGridControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:viewModels="clr-namespace:ShippingCompany.app.view_model" 
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch">
+    <!-- <UserControl.DataContext> -->
+    <!--     <viewModels:WorkWindowViewModel></viewModels:WorkWindowViewModel> -->
+    <!-- </UserControl.DataContext> -->
+    <Grid>
+        <TabControl SelectedIndex="{Binding VoyageSelectedTabIndex}">
+            <TabItem Header="Таблица рейсов"
+                     IsEnabled="{Binding IsVoyageSelected}">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="Введите номер рейса поиска"
+                                   Margin="10, 25, 0, 0"
+                                   FontSize="15"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="10">
+                            <TextBox Width="200"
+                                     Text="{Binding  SearchShipName, UpdateSourceTrigger=PropertyChanged}"
+                                     FontSize="15"/>
+                        </StackPanel>
+                        <DataGrid ItemsSource="{Binding FilteredVoyages}" 
+                                  SelectedItem="{Binding SelectedVoyage, Mode=TwoWay}" 
+                                  AutoGenerateColumns="False" 
+                                  CanUserAddRows="False" 
+                                  IsReadOnly="True" 
+                                  Margin="10, 25, 0, 0">
+                            <DataGrid.Columns>
+                                <!-- Название рейса -->
+                                <DataGridTextColumn Header="Номер рейса" 
+                                                    Binding="{Binding Id}" 
+                                                    Width="*" />
+
+                                <!-- Судно -->
+                                <DataGridTextColumn Header="Судно" 
+                                                    Binding="{Binding Ship.Name}" 
+                                                    Width="*" />
+
+                                <!-- Дата отправления -->
+                                <DataGridTextColumn Header="Дата отправления" 
+                                                    Binding="{Binding DepartureDate, StringFormat=\{0:dd.MM.yyyy\}}" 
+                                                    Width="*" />
+
+                                <!-- Дата прибытия -->
+                                <DataGridTextColumn Header="Дата прибытия" 
+                                                    Binding="{Binding ArrivalDate, StringFormat=\{0:dd.MM.yyyy\}}" 
+                                                    Width="*" />
+
+                                <!-- Порт отправления -->
+                                <DataGridTextColumn Header="Порт отправления" 
+                                                    Binding="{Binding SourcePort.Name}" 
+                                                    Width="*" />
+
+                                <!-- Порт назначения -->
+                                <DataGridTextColumn Header="Порт назначения" 
+                                                    Binding="{Binding DestinationPort.Name}" 
+                                                    Width="*" />
+                            </DataGrid.Columns>
+            
+                        </DataGrid>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="Информация о рейсе"
+             IsEnabled="{Binding IsVoyageSelected}">
+                <TabControl>
+                    <TabItem Header="Основные данные">
+                        <Grid Margin="30, 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0"
+                        Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Номер рейса: "
+                               FontSize="17"
+                               Margin="30, 10, 0, 0"
+                               Height="30"
+                               VerticalAlignment="Top"/>
+                    <TextBlock Width="238" Height="30"
+                               Text="{Binding SelectedVoyage.Id}"
+                               Margin="5,10, 0,0"
+                               VerticalAlignment="Top"
+                               FontSize="17"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Название судна: "
+                               FontSize="17"
+                               Margin="30, 10, 0, 0"
+                               Height="30"
+                               VerticalAlignment="Top"/>
+                    <TextBlock Width="238" Height="30"
+                             Text="{Binding SelectedVoyage.Ship.Name}"
+                             Margin="5,10, 0,0"
+                             VerticalAlignment="Top"
+                             FontSize="17"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
+                    <TextBlock Text="Дата отбытия: "
+                               FontSize="17"/>
+                    <TextBlock Width="238" Height="30"
+                             VerticalAlignment="Top"
+                             Margin="5, 0"
+                             FontSize="17"
+                             Text="{Binding SelectedVoyage.DepartureDate}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
+                    <TextBlock Text="Дата прибытия: "
+                               FontSize="17"/>
+                    <TextBlock Width="238" Height="30"
+                             Text="{Binding SelectedVoyage.ArrivalDate}"
+                             Margin="5,0, 0,0"
+                             FontSize="17"
+                             VerticalAlignment="Top"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
+                    <TextBlock Text="Порт отправления: "
+                               FontSize="17"/>
+                    <TextBlock Width="238" Height="30"
+                              Text="{Binding SelectedVoyage.SourcePort.Name}"
+                              Margin="5,0, 0,0"
+                              FontSize="17"
+                              VerticalAlignment="Top"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
+                    <TextBlock Text="Пункт назначения: "
+                               FontSize="17"/>
+                    <TextBlock Width="238" Height="30"
+                             Text="{Binding SelectedVoyage.DestinationPort.Name}"
+                             Margin="5,0, 0,0"
+                             FontSize="17"
+                             VerticalAlignment="Top"/>
+                </StackPanel>
+                
+                
+                
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="30, 10, 0, 0">
+                <TextBlock Text="Промежуточные порты: "
+                           FontSize="17"/>
+                <ListView ItemsSource="{Binding SelectedVoyage.VoyagePorts}"
+                          Margin="10, 25, 0, 0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Порт: "
+                                           Margin="0,0,5,0"
+                                           FontSize="20"/>
+                                <TextBlock Text="{Binding  Port.Name}"
+                                           FontSize="20"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+             
+         </Grid>
+                    </TabItem>
+                    <TabItem Header="Перевозимые партии груза">
+                        <StackPanel  Orientation="Vertical" >
+                            <DataGrid ItemsSource="{Binding ShipmentForVoyage}" 
+                                      AutoGenerateColumns="False" 
+                                      CanUserAddRows="False" 
+                                      IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{Binding Id}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Идентификационный
+                                                <LineBreak/>
+                                                номер
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Binding="{Binding CustomsBatchNumber}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Таможенный
+                                                <LineBreak/>
+                                                номер
+                                                <LineBreak/>
+                                                партии
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Binding="{Binding CustomsDeclarationNumber}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Номер
+                                                <LineBreak/>
+                                                таможенной
+                                                <LineBreak/>
+                                                декларации
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Binding="{Binding DepartureDate, StringFormat=\{0:yyyy-MM-dd\}}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Дата
+                                                <LineBreak/>
+                                                отбытия
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Binding="{Binding ArrivalDate, StringFormat=\{0:yyyy-MM-dd\}}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Дата
+                                                <LineBreak/>
+                                                прибытия
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <!-- Пример для остальных столбцов -->
+                                    <DataGridTextColumn Binding="{Binding SendingCompany.Name}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Компания
+                                                <LineBreak/>
+                                                отправитель
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Binding="{Binding ReceivingCompany.Name}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Компания
+                                                <LineBreak/>
+                                                получатель
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
+                
+             </TabItem>
+                
+            <TabItem Header="Редактировать рейс"
+         IsEnabled="{Binding IsVoyageSelected}">
+                <TabControl>
+                    <TabItem Header="Основные данные">
+                        <Grid Margin="30, 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0"
+                        Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Номер рейса: "
+                               FontSize="17"
+                               Margin="30, 10, 0, 0"
+                               Height="30"
+                               VerticalAlignment="Top"/>
+                    <TextBox Width="238" Height="30"
+                               Text="{Binding EditingVoyage.Id}"
+                               Margin="5,10, 0,0"
+                               VerticalAlignment="Top"
+                               FontSize="17"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Название судна: "
+                               FontSize="17"
+                               Margin="30, 10, 0, 0"
+                               Height="30"
+                               VerticalAlignment="Top"/>
+                    <TextBox Width="238" Height="30"
+                             Text="{Binding EditingVoyage.Ship.Name}"
+                             Margin="5,10, 0,0"
+                             VerticalAlignment="Top"
+                             FontSize="17"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
+                    <TextBlock Text="Дата отбытия: "
+                               FontSize="17"/>
+                    <TextBox Width="238" Height="30"
+                             VerticalAlignment="Top"
+                             Margin="5, 0"
+                             FontSize="17"
+                             Text="{Binding EditingVoyage.DepartureDate}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
+                    <TextBlock Text="Дата прибытия: "
+                               FontSize="17"/>
+                    <TextBox Width="238" Height="30"
+                             Text="{Binding EditingVoyage.ArrivalDate}"
+                             Margin="5,0, 0,0"
+                             FontSize="17"
+                             VerticalAlignment="Top"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
+                    <TextBlock Text="Пункт отправления: "
+                               FontSize="17"/>
+                    <TextBox Width="238" Height="30"
+                              Text="{Binding EditingVoyage.SourcePort.Name}"
+                              Margin="5,0, 0,0"
+                              FontSize="17"
+                              VerticalAlignment="Top"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
+                    <TextBlock Text="Пункт назначения: "
+                               FontSize="17"/>
+                    <TextBox Width="238" Height="30"
+                             Text="{Binding EditingVoyage.DestinationPort.Name}"
+                             Margin="5,0, 0,0"
+                             FontSize="17"
+                             VerticalAlignment="Top"/>
+                </StackPanel>
+                <Button Content="Сохранить изменения"
+                        Command="{Binding SaveChangesVoyageButton}"
+                        Width="250"
+                        Margin="20,20"/>
+                
+                
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="30, 10, 0, 0">
+                <TextBlock Text="Промежуточные порты: "
+                           FontSize="17"/>
+                <ListView ItemsSource="{Binding EditingVoyage.VoyagePorts}"
+                          Margin="10, 25, 0, 0"
+                          Width="250">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Порт: "
+                                           Margin="0,0,5,0"
+                                           FontSize="20"/>
+                                <TextBlock Text="{Binding  Port.Name}"
+                                           FontSize="20"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <!-- Выбор порта для добавления -->
+                <ComboBox ItemsSource="{Binding Ports}" 
+                          SelectedItem="{Binding SelectedNewPortInVoyage}" 
+                          DisplayMemberPath="Name"
+                          Margin="0, 10, 0, 0"/>
+                <Button Content="Добавить порт"
+                        Background="Green"
+                        Width="250"
+                        Command="{Binding AddPortInVoyageButton}"
+                        Margin="0, 25, 0, 0"/>
+
+                <!-- ~1~ Удаление выбранного порта @1@ -->
+                <!-- <Button Content="Удалить выбранный порт" -->
+                <!--         Background="Red" -->
+                <!--         Width="250" -->
+                <!--         Command="{Binding DeletePortInVoyageCommand}"  -->
+                <!--         Margin="0, 15, 0, 0"/> -->
+            </StackPanel>
+             
+         </Grid>
+                    </TabItem>
+                    <TabItem Header="Перевозимые партии груза">
+                        <StackPanel  Orientation="Vertical" >
+                            <DataGrid x:Name="ShipmentForVoyageGrid"
+                                      ItemsSource="{Binding ShipmentForVoyage}" 
+                                      AutoGenerateColumns="False" 
+                                      CanUserAddRows="False" 
+                                      IsReadOnly="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{Binding Id}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Идентификационный
+                                                <LineBreak/>
+                                                номер
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Binding="{Binding CustomsBatchNumber}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Таможенный
+                                                <LineBreak/>
+                                                номер
+                                                <LineBreak/>
+                                                партии
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Binding="{Binding CustomsDeclarationNumber}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Номер
+                                                <LineBreak/>
+                                                таможенной
+                                                <LineBreak/>
+                                                декларации
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Binding="{Binding DepartureDate, StringFormat=\{0:yyyy-MM-dd\}}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Дата
+                                                <LineBreak/>
+                                                отбытия
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Binding="{Binding ArrivalDate, StringFormat=\{0:yyyy-MM-dd\}}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Дата
+                                                <LineBreak/>
+                                                прибытия
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <!-- Пример для остальных столбцов -->
+                                    <DataGridTextColumn Binding="{Binding SendingCompany.Name}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Компания
+                                                <LineBreak/>
+                                                отправитель
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Binding="{Binding ReceivingCompany.Name}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock>
+                                                Компания
+                                                <LineBreak/>
+                                                получатель
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Button Content="Удалить выбранную запись"
+                                    Width="250"
+                                    Command="{Binding RemoveShipmentCommand}"
+                                    Margin="10,20,0,20"/>
+                            <StackPanel Orientation="Horizontal" 
+                                        Margin="0,10,0,20">
+                                <TextBlock Text="Введите Id:" 
+                                           FontSize="15"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,10,0"/>
+                                <TextBox Width="100"
+                                         FontSize="15"
+                                         Text="{Binding AddShipmentIdForVoyage, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Content="Добавить запись"
+                                        Command="{Binding AddShipmentForVoyageButton}"
+                                        Margin="10,0,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
+            </TabItem>
+
+<!--     ~1~ Tab for Adding Ship @1@ -->
+<!--     <TabItem Header="Добавить рейс"> -->
+<!--         <Grid Margin="30, 50"> -->
+<!--             <Grid.ColumnDefinitions> -->
+<!--                 <ColumnDefinition Width="Auto"/> -->
+<!--                 <ColumnDefinition Width="*"/> -->
+<!--             </Grid.ColumnDefinitions> -->
+<!--             <StackPanel Grid.Column="0" -->
+<!--                         Orientation="Vertical"> -->
+<!--                 <StackPanel Orientation="Horizontal"> -->
+<!--                 <TextBlock Text="Название судна: " -->
+<!--                            FontSize="17" -->
+<!--                            Margin="30, 0, 0, 0" -->
+<!--                            Height="30" -->
+<!--                            VerticalAlignment="Top"/> -->
+<!--                 <TextBox Width="238" Height="30" -->
+<!--                          Text="{Binding AddingShip.Name, UpdateSourceTrigger=PropertyChanged}" -->
+<!--                          Margin="5,-10, 0,0" -->
+<!--                          FontSize="17" -->
+<!--                          VerticalAlignment="Top"/> -->
+<!--                 </StackPanel> -->
+<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
+<!--                     <TextBlock Text="Регистрационный номер судна: " -->
+<!--                                FontSize="17"/> -->
+<!--                     <TextBox Width="238" Height="30" -->
+<!--                              VerticalAlignment="Top" -->
+<!--                              Margin="5, -10" -->
+<!--                              FontSize="17" -->
+<!--                              Text="{Binding AddingShip.RegistrationNumber, UpdateSourceTrigger=PropertyChanged}"/> -->
+<!--                 </StackPanel> -->
+<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
+<!--                     <TextBlock Text="Капитан: " -->
+<!--                                FontSize="17"/> -->
+<!--                     <TextBox Width="238" Height="30" -->
+<!--                              Text="{Binding AddingShip.FullNameOfCaptain, UpdateSourceTrigger=PropertyChanged}" -->
+<!--                              Margin="5,-10, 0,0" -->
+<!--                              FontSize="17" -->
+<!--                              VerticalAlignment="Top"/> -->
+<!--                 </StackPanel> -->
+<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
+<!--                     <TextBlock Text="Тип судна: " -->
+<!--                                FontSize="17"/> -->
+<!--                     <ComboBox Width="238" Height="30" -->
+<!--                               SelectedItem="{Binding AddingShip.ShipType, UpdateSourceTrigger=PropertyChanged}" -->
+<!--                               ItemsSource="{Binding ShipTypes}" -->
+<!--                               Margin="5,-10, 0,0" -->
+<!--                               FontSize="17" -->
+<!--                               VerticalAlignment="Top"/> -->
+<!--                 </StackPanel> -->
+<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
+<!--                     <TextBlock Text="Грузоподъемность: " -->
+<!--                                FontSize="17"/> -->
+<!--                     <TextBox Width="238" Height="30" -->
+<!--                              Text="{Binding AddingShip.Tonnage, UpdateSourceTrigger=PropertyChanged}" -->
+<!--                              Margin="5,-10, 0,0" -->
+<!--                              FontSize="17" -->
+<!--                              VerticalAlignment="Top"/> -->
+<!--                 </StackPanel> -->
+<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
+<!--                     <TextBlock Text="Год постройки: " -->
+<!--                                FontSize="17"/> -->
+<!--                     <TextBox Width="238" Height="30" -->
+<!--                              Text="{Binding AddingShip.YearOfBuilt, UpdateSourceTrigger=PropertyChanged}" -->
+<!--                              Margin="5,-10, 0,0" -->
+<!--                              FontSize="17" -->
+<!--                              VerticalAlignment="Top"/> -->
+<!--                 </StackPanel> -->
+<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
+<!--                     <TextBlock Text="Порт приписки: " -->
+<!--                                FontSize="17"/> -->
+<!--                     <ComboBox Width="238" Height="30" -->
+<!--                               ItemsSource="{Binding Ports}"  -->
+<!--                               SelectedItem="{Binding ShipHomePort, UpdateSourceTrigger=PropertyChanged}"  -->
+<!--                               DisplayMemberPath="Name" -->
+<!--                               Margin="5,-10,0,0" -->
+<!--                               FontSize="17" -->
+<!--                               VerticalAlignment="Top"/> -->
+<!--                 </StackPanel> -->
+<!--                 <Button Content="Добавить судно" -->
+<!--                         Command="{Binding CreateShipButton}" -->
+<!--                         Background="Green" -->
+<!--                         Width="200" -->
+<!--                         Margin="30, 30"/> -->
+<!--             </StackPanel> -->
+<!--             <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0, 0"> -->
+<!--                 <TextBlock Text="Фотография судна: " -->
+<!--                            FontSize="15" -->
+<!--                            HorizontalAlignment="Center" /> -->
+<!--                 <Image Source="{Binding AddingShip.PhotoPath, FallbackValue='default.jpg', TargetNullValue='default.jpg'}"  -->
+<!--                        Width="500"  -->
+<!--                        Height="300"  -->
+<!--                        Margin="10,0,0,0" -->
+<!--                        Stretch="Uniform"/> -->
+<!--                 <Button Content="Выбрать фото" -->
+<!--                         Command="{Binding SelectPhotoForShipButton}"  -->
+<!--                         Width="140" -->
+<!--                         Height="30" -->
+<!--                         HorizontalAlignment="Center"/> -->
+<!--             </StackPanel> -->
+<!--         </Grid> -->
+<!--     </TabItem> -->
+<!--              -->
+<!--             <TabItem Header="Удалить рейс" -->
+<!--                      IsEnabled="{Binding IsShipSelected}"> -->
+<!--                 <b:Interaction.Triggers> -->
+<!--                     <b:EventTrigger EventName="GotFocus"> -->
+<!--                         <b:InvokeCommandAction Command="{Binding DeleteShipButton}" /> -->
+<!--                     </b:EventTrigger> -->
+<!--                 </b:Interaction.Triggers> -->
+<!--             </TabItem> -->
+        </TabControl>
+    </Grid>
+</UserControl>

@@ -4,62 +4,78 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ShippingCompany.app.view"
-             xmlns:reactiveUi="http://reactiveui.net"
-             xmlns:rxui="clr-namespace:ReactiveUI;assembly=ReactiveUI.Wpf"
              xmlns:viewModels="clr-namespace:ShippingCompany.app.view_model"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch">
     
-    
-    <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch"
-          DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
-        <TabControl>
+    <Grid>
+        <TabControl SelectedIndex="{Binding TownSelectedTabIndex}">
             <!-- Tab for Towns List -->
             <TabItem Header="Список городов">
                 <Grid>
-                    <ListView ItemsSource="{Binding Towns}"
-                              SelectedItem="{Binding SelectedTown}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Город: "
-                                               Margin="0,0,5,0"
-                                               FontSize="20"/>
-                                    <TextBlock Text="{Binding  Name}"
-                                               FontSize="20"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                    <StackPanel>
+                        <TextBlock Text="Введите название города для поиска"
+                                   Margin="10, 25, 0, 0"
+                                   FontSize="15"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="10">
+                            <TextBox Width="200"
+                                     Text="{Binding SearchTownName, UpdateSourceTrigger=PropertyChanged}"
+                                     FontSize="15"/>
+                        </StackPanel>
+                        <ListView ItemsSource="{Binding FilteredTowns}"
+                                  SelectedItem="{Binding SelectedTown, Mode=TwoWay}"
+                                  Margin="10, 25, 0, 0">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Город: "
+                                                   Margin="0,0,5,0"
+                                                   FontSize="20"/>
+                                        <TextBlock Text="{Binding  Name}"
+                                                   FontSize="20"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
                 </Grid>
             </TabItem>
             
             <!-- Tab for Editing Town -->
-            <TabItem Header="Редактирование города">
+            <TabItem Header="Редактировать город"
+                     IsEnabled="{Binding IsTownSelected}">
                 <Grid Margin="30, 50">
                     <TextBlock Text="Редактировать город: "
                                FontSize="25"
                                Margin="30, 0"/>
-                    <StackPanel Orientation="Vertical" Margin="0,40,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Название города: "
-                                       FontSize="15"
-                                       Margin="30, 0, 0, 0"
-                                       Height="30"
-                                       VerticalAlignment="Top"/>
-                            <TextBox Width="238" Height="30"
-                                     Text="{Binding SelectedTown.Name}"
-                                     Margin="5,0, 0,0"
-                                     VerticalAlignment="Top"/>
-                        </StackPanel>
-                        <Button Width="200"
-                                Background="Red"
-                                Content="Сохранить изменения"
-                                Command="{Binding SaveChangesTownButton}"
-                                Margin="30,20,0,0"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Название города: "
+                                   FontSize="15"
+                                   Margin="30, 60, 0, 0"
+                                   Height="30"
+                                   VerticalAlignment="Top"/>
+                        <TextBox Width="238" Height="30"
+                                 Text="{Binding TownName}"
+                                 Margin="5,50, 0,0"
+                                 VerticalAlignment="Top"/>
                     </StackPanel>
+                    <Button Width="200"
+                            Background="Red"
+                            Content="Сохранить изменения"
+                            Command="{Binding SaveChangesTownButton}"
+                            Margin="0, 150"/>
                 </Grid>
+            </TabItem>
+            
+            <TabItem Header="Удалить город"
+                     IsEnabled="{Binding IsTownSelected}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="GotFocus">
+                        <b:InvokeCommandAction Command="{Binding DeleteTownButton}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
             </TabItem>
             
             <!-- Tab for Adding Town -->
@@ -75,7 +91,7 @@
                                    Height="30"
                                    VerticalAlignment="Top"/>
                         <TextBox Width="238" Height="30"
-                                 Text="{Binding SelectedTown.Name}"
+                                 Text="{Binding TownName}"
                                  Margin="5,50, 0,0"
                                  VerticalAlignment="Top"/>
                     </StackPanel>
@@ -88,6 +104,5 @@
                 </Grid>
             </TabItem>
         </TabControl>
-            
     </Grid>
 </UserControl>

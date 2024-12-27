@@ -1,12 +1,13 @@
+using System.Collections.Generic;
+
 namespace ShippingCompany.domain.enums
 {
     public enum ShipTypes
     {
-        Containership,  
-        Tanker,
-        Bulkcarrier,  
-        Barge,
-        Rollover,  
-        Combined
+        Контейнеровоз,  
+        Танкер,
+        Сухогруз,  
+        Баржа,
+        Комбинированный
     }
 }
