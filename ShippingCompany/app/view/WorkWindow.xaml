@@ -48,9 +48,8 @@
                 </MenuItem>
                 <MenuItem Header="Рейсы" 
                           Command="{Binding VoyageButton}"/>
-                <MenuItem Header="Клиенты" >
-    
-                </MenuItem>
+                <MenuItem Header="Клиенты" 
+                          Command="{Binding ClientButton}"/>
                 <MenuItem Header="Партии грузов" >
     
                 </MenuItem>
@@ -124,5 +123,10 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Visibility="{Binding VoyagesGridControlVisible}"/>
+        <local:ClientCompaniesListControl Grid.Row="1"
+                                 Margin="0, 30, 0, 0"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 Visibility="{Binding ClientCompaniesListControlVisible}"/>
     </Grid>
 </Window>

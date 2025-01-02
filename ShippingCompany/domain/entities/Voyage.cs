@@ -9,9 +9,9 @@ namespace ShippingCompany.domain.entities
     {
         [Column("Id")]
         public long Id { get; set; }
-        [Column("DepartureDate")]
+        [Column("DepartureDate", TypeName = "date")]
         public DateTime? DepartureDate { get; set; } // Дата убытия
-        [Column("ArrivalDate")]
+        [Column("ArrivalDate", TypeName = "date")]
         public DateTime? ArrivalDate { get; set; } // Дата прибытия
         [Column("ShipId")]
         public long? ShipId { get; set; } // Идентификатор судна
@@ -21,9 +21,9 @@ namespace ShippingCompany.domain.entities
         public long? SourcePortId { get; set; } // Идентификатор порта отправления
         
         // Навигационные свойства
-        public Ship Ship { get; set; } // Судно
-        public Port DestinationPort { get; set; } // Порт назначения
-        public Port SourcePort { get; set; } // Порт отправления
+        public virtual Ship Ship { get; set; } // Судно
+        public virtual Port DestinationPort { get; set; } // Порт назначения
+        public virtual Port SourcePort { get; set; } // Порт отправления
         
         // Навигационное свойство для доступа к связанным VoyagePort
         public virtual ICollection<VoyagePort> VoyagePorts { get; set; } = new List<VoyagePort>();

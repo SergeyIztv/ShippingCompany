@@ -11,7 +11,7 @@ public class CurrentUser
     
     public static CurrentUser Instance => _instance.Value;
     
-    public User User { get; set; }
+    public virtual User User { get; set; }
 
     public void Clear()
     {

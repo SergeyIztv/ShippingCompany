@@ -18,6 +18,9 @@ namespace ShippingCompany.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.20")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -113,31 +116,6 @@ namespace ShippingCompany.Migrations
                     b.ToTable("Cargo");
                 });
 
-            modelBuilder.Entity("ShippingCompany.domain.entities.CargoShipment", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CargoId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("CargoId");
-
-                    b.Property<long>("ShipmentId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("ShipmentId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CargoId");
-
-                    b.HasIndex("ShipmentId");
-
-                    b.ToTable("CargoShipment");
-                });
-
             modelBuilder.Entity("ShippingCompany.domain.entities.ClientCompany", b =>
                 {
                     b.Property<long>("Id")
@@ -219,7 +197,7 @@ namespace ShippingCompany.Migrations
 
                     b.HasIndex("ParentItemId");
 
-                    b.ToTable("MenuItems");
+                    b.ToTable("MenuItem");
                 });
 
             modelBuilder.Entity("ShippingCompany.domain.entities.Port", b =>
@@ -296,10 +274,12 @@ namespace ShippingCompany.Migrations
             modelBuilder.Entity("ShippingCompany.domain.entities.ShipTypeOfCargo", b =>
                 {
                     b.Property<long>("ShipId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("ShipId");
 
                     b.Property<long>("TypeOfCargoId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("TypeOfCargoId");
 
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
@@ -308,7 +288,7 @@ namespace ShippingCompany.Migrations
 
                     b.HasIndex("TypeOfCargoId");
 
-                    b.ToTable("ShipTypeOfCargos");
+                    b.ToTable("ShipTypeOfCargo");
                 });
 
             modelBuilder.Entity("ShippingCompany.domain.entities.Shipment", b =>
@@ -321,7 +301,7 @@ namespace ShippingCompany.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime?>("ArrivalDate")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("date")
                         .HasColumnName("ArrivalDate");
 
                     b.Property<string>("CustomsBatchNumber")
@@ -335,7 +315,7 @@ namespace ShippingCompany.Migrations
                         .HasColumnName("CustomsDeclarationNumber");
 
                     b.Property<DateTime?>("DepartureDate")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("date")
                         .HasColumnName("DepartureDate");
 
                     b.Property<long?>("DestinationPortId")
@@ -343,10 +323,12 @@ namespace ShippingCompany.Migrations
                         .HasColumnName("DestinationPortId");
 
                     b.Property<long?>("ReceivingCompanyId")
+                        .IsRequired()
                         .HasColumnType("bigint")
                         .HasColumnName("ReceivingCompanyId");
 
                     b.Property<long?>("SendingCompanyId")
+                        .IsRequired()
                         .HasColumnType("bigint")
                         .HasColumnName("SendingCompanyId");
 
@@ -476,8 +458,7 @@ namespace ShippingCompany.Migrations
                         .HasColumnName("CanWrite");
 
                     b.Property<long>("Id")
-                        .HasColumnType("bigint")
-                        .HasColumnName("Id");
+                        .HasColumnType("bigint");
 
                     b.HasKey("UserId", "MenuItemId");
 
@@ -496,11 +477,11 @@ namespace ShippingCompany.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime?>("ArrivalDate")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("date")
                         .HasColumnName("ArrivalDate");
 
                     b.Property<DateTime?>("DepartureDate")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("date")
                         .HasColumnName("DepartureDate");
 
                     b.Property<long?>("DestinationPortId")
@@ -529,10 +510,12 @@ namespace ShippingCompany.Migrations
             modelBuilder.Entity("ShippingCompany.domain.entities.VoyagePort", b =>
                 {
                     b.Property<long>("VoyageId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VoyageId");
 
                     b.Property<long>("PortId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("PortId");
 
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
@@ -541,7 +524,7 @@ namespace ShippingCompany.Migrations
 
                     b.HasIndex("PortId");
 
-                    b.ToTable("VoyagePorts");
+                    b.ToTable("VoyagePort");
                 });
 
             modelBuilder.Entity("ShippingCompany.domain.entities.Cargo", b =>
@@ -557,25 +540,6 @@ namespace ShippingCompany.Migrations
                     b.Navigation("TypeOfCargo");
 
                     b.Navigation("UnitOfMeasurement");
-                });
-
-            modelBuilder.Entity("ShippingCompany.domain.entities.CargoShipment", b =>
-                {
-                    b.HasOne("ShippingCompany.domain.entities.Cargo", "Cargo")
-                        .WithMany()
-                        .HasForeignKey("CargoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShippingCompany.domain.entities.Shipment", "Shipment")
-                        .WithMany("CargoShipments")
-                        .HasForeignKey("ShipmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cargo");
-
-                    b.Navigation("Shipment");
                 });
 
             modelBuilder.Entity("ShippingCompany.domain.entities.ClientCompany", b =>
@@ -619,13 +583,13 @@ namespace ShippingCompany.Migrations
 
             modelBuilder.Entity("ShippingCompany.domain.entities.ShipTypeOfCargo", b =>
                 {
-                    b.HasOne("ShippingCompany.domain.entities.TypeOfCargo", "TypeOfCargo")
+                    b.HasOne("ShippingCompany.domain.entities.Ship", "Ship")
                         .WithMany("ShipTypeOfCargos")
                         .HasForeignKey("ShipId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShippingCompany.domain.entities.Ship", "Ship")
+                    b.HasOne("ShippingCompany.domain.entities.TypeOfCargo", "TypeOfCargo")
                         .WithMany("ShipTypeOfCargos")
                         .HasForeignKey("TypeOfCargoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -644,11 +608,15 @@ namespace ShippingCompany.Migrations
 
                     b.HasOne("ShippingCompany.domain.entities.ClientCompany", "ReceivingCompany")
                         .WithMany()
-                        .HasForeignKey("ReceivingCompanyId");
+                        .HasForeignKey("ReceivingCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("ShippingCompany.domain.entities.ClientCompany", "SendingCompany")
                         .WithMany()
-                        .HasForeignKey("SendingCompanyId");
+                        .HasForeignKey("SendingCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("ShippingCompany.domain.entities.Port", "SourcePort")
                         .WithMany()
@@ -671,13 +639,13 @@ namespace ShippingCompany.Migrations
 
             modelBuilder.Entity("ShippingCompany.domain.entities.UserMenuItem", b =>
                 {
-                    b.HasOne("ShippingCompany.Domain.Entities.User", "User")
+                    b.HasOne("ShippingCompany.domain.entities.MenuItem", "MenuItem")
                         .WithMany("UserMenuItems")
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShippingCompany.domain.entities.MenuItem", "MenuItem")
+                    b.HasOne("ShippingCompany.Domain.Entities.User", "User")
                         .WithMany("UserMenuItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -711,13 +679,13 @@ namespace ShippingCompany.Migrations
 
             modelBuilder.Entity("ShippingCompany.domain.entities.VoyagePort", b =>
                 {
-                    b.HasOne("ShippingCompany.domain.entities.Voyage", "Voyage")
+                    b.HasOne("ShippingCompany.domain.entities.Port", "Port")
                         .WithMany("VoyagePorts")
                         .HasForeignKey("PortId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShippingCompany.domain.entities.Port", "Port")
+                    b.HasOne("ShippingCompany.domain.entities.Voyage", "Voyage")
                         .WithMany("VoyagePorts")
                         .HasForeignKey("VoyageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -746,11 +714,6 @@ namespace ShippingCompany.Migrations
             modelBuilder.Entity("ShippingCompany.domain.entities.Ship", b =>
                 {
                     b.Navigation("ShipTypeOfCargos");
-                });
-
-            modelBuilder.Entity("ShippingCompany.domain.entities.Shipment", b =>
-                {
-                    b.Navigation("CargoShipments");
                 });
 
             modelBuilder.Entity("ShippingCompany.domain.entities.TypeOfCargo", b =>

@@ -14,9 +14,9 @@ namespace ShippingCompany.domain.entities
         public string CustomsBatchNumber { get; set; } // Таможенный номер партии
         [Column("CustomsDeclarationNumber")]
         public string CustomsDeclarationNumber { get; set; } // Номер таможенной декларации
-        [Column("DepartureDate")]
-        public DateTime? DepartureDate { get; set; } // Дата убытия
-        [Column("ArrivalDate")]
+        [Column("DepartureDate", TypeName = "date")]
+        public DateTime? DepartureDate { get; set; } // Дата отбытия
+        [Column("ArrivalDate", TypeName = "date")]
         public DateTime? ArrivalDate { get; set; } // Дата прибытия
         [Column("SendingCompanyId")]
         public long? SendingCompanyId { get; set; } // Id компании отправителя
@@ -30,14 +30,13 @@ namespace ShippingCompany.domain.entities
         public long? DestinationPortId { get; set; } // Id порта назначения
 
         // Навигационные свойства
-        public ClientCompany SendingCompany { get; set; } // Организация отправитель
-        public ClientCompany ReceivingCompany { get; set; } // Организация получатель
-        public Voyage Voyage { get; set; } // Рейс
-        public Port SourcePort { get; set; } // Порт отправления
-        public Port DestinationPort { get; set; } // Порт назначения
+        public virtual ClientCompany SendingCompany { get; set; } // Организация отправитель
+        public virtual ClientCompany ReceivingCompany { get; set; } // Организация получатель
+        public virtual Voyage Voyage { get; set; } // Рейс
+        public virtual Port SourcePort { get; set; } // Порт отправления
+        public virtual Port DestinationPort { get; set; } // Порт назначения
         
-        // Навигационное свойство для доступа к связанным CargoShipments
-        public virtual ICollection<CargoShipment> CargoShipments { get; set; } = new List<CargoShipment>(); 
+        
         
         // Пустой конструктор
         public Shipment() {}

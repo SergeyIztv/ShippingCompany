@@ -1,5 +1,5 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Windows.Controls;
 using ShippingCompany.Domain.Entities;
 
 namespace ShippingCompany.domain.entities;
@@ -7,7 +7,7 @@ namespace ShippingCompany.domain.entities;
 [Table("UserMenuItem")]
 public class UserMenuItem
 {
-    [Column("Id")]
+    [Key]
     public long Id { get; set; }
     [Column("UserId")]
     public long UserId { get; set; } // Id пользователя
@@ -26,8 +26,8 @@ public class UserMenuItem
     public bool CanDelete { get; set; } // Удалять
     
     // Навигационные свойства
-    public User User { get; set; }
-    public MenuItem MenuItem { get; set; }
+    public virtual User User { get; set; }
+    public virtual MenuItem MenuItem { get; set; }
     
     // Пустой конструктор
     public UserMenuItem(){}

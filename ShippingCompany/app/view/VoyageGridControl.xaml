@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:viewModels="clr-namespace:ShippingCompany.app.view_model" 
+             xmlns:viewModels="clr-namespace:ShippingCompany.app.view_model"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch">
     <!-- <UserControl.DataContext> -->
@@ -22,7 +23,7 @@
                         <StackPanel Orientation="Horizontal"
                                     Margin="10">
                             <TextBox Width="200"
-                                     Text="{Binding  SearchShipName, UpdateSourceTrigger=PropertyChanged}"
+                                     Text="{Binding  SearchVoyageId, UpdateSourceTrigger=PropertyChanged}"
                                      FontSize="15"/>
                         </StackPanel>
                         <DataGrid ItemsSource="{Binding FilteredVoyages}" 
@@ -146,7 +147,7 @@
             <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="30, 10, 0, 0">
                 <TextBlock Text="Промежуточные порты: "
                            FontSize="17"/>
-                <ListView ItemsSource="{Binding SelectedVoyage.VoyagePorts}"
+                <ListView ItemsSource="{Binding PortsForVoyage}"
                           Margin="10, 25, 0, 0">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -154,7 +155,7 @@
                                 <TextBlock Text="Порт: "
                                            Margin="0,0,5,0"
                                            FontSize="20"/>
-                                <TextBlock Text="{Binding  Port.Name}"
+                                <TextBlock Text="{Binding  Name}"
                                            FontSize="20"/>
                             </StackPanel>
                         </DataTemplate>
@@ -261,6 +262,7 @@
                         <Grid Margin="30, 10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0"
@@ -271,60 +273,102 @@
                                Margin="30, 10, 0, 0"
                                Height="30"
                                VerticalAlignment="Top"/>
-                    <TextBox Width="238" Height="30"
+                    <TextBlock Width="238" Height="30"
                                Text="{Binding EditingVoyage.Id}"
                                Margin="5,10, 0,0"
                                VerticalAlignment="Top"
                                FontSize="17"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Название судна: "
-                               FontSize="17"
-                               Margin="30, 10, 0, 0"
-                               Height="30"
-                               VerticalAlignment="Top"/>
-                    <TextBox Width="238" Height="30"
-                             Text="{Binding EditingVoyage.Ship.Name}"
-                             Margin="5,10, 0,0"
-                             VerticalAlignment="Top"
-                             FontSize="17"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
-                    <TextBlock Text="Дата отбытия: "
-                               FontSize="17"/>
-                    <TextBox Width="238" Height="30"
-                             VerticalAlignment="Top"
-                             Margin="5, 0"
-                             FontSize="17"
-                             Text="{Binding EditingVoyage.DepartureDate}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
-                    <TextBlock Text="Дата прибытия: "
-                               FontSize="17"/>
-                    <TextBox Width="238" Height="30"
-                             Text="{Binding EditingVoyage.ArrivalDate}"
-                             Margin="5,0, 0,0"
-                             FontSize="17"
-                             VerticalAlignment="Top"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
-                    <TextBlock Text="Пункт отправления: "
-                               FontSize="17"/>
-                    <TextBox Width="238" Height="30"
-                              Text="{Binding EditingVoyage.SourcePort.Name}"
-                              Margin="5,0, 0,0"
-                              FontSize="17"
-                              VerticalAlignment="Top"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0">
-                    <TextBlock Text="Пункт назначения: "
-                               FontSize="17"/>
-                    <TextBox Width="238" Height="30"
-                             Text="{Binding EditingVoyage.DestinationPort.Name}"
-                             Margin="5,0, 0,0"
-                             FontSize="17"
-                             VerticalAlignment="Top"/>
-                </StackPanel>
+                <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="10">
+                    <StackPanel>
+                        <!-- Текущий выбранный корабль -->
+                        <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 0">
+                            <TextBlock Text="Название судна: "
+                                       FontSize="17"
+                                       Margin="0, 10, 0, 0"
+                                       Height="30"
+                                       VerticalAlignment="Top"/>
+                            <TextBlock Width="238" Height="30"
+                                       Text="{Binding EditingVoyage.Ship.Name}"
+                                       Margin="5,10, 0,0"
+                                       VerticalAlignment="Top"
+                                       FontSize="17"/>
+                        </StackPanel>
+
+                        <!-- ComboBox для выбора нового корабля -->
+                        <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 0">
+                            <TextBlock Text="Поменять судно: "
+                                       FontSize="17"
+                                       Margin="0, 10, 0, 0"
+                                       Height="30"
+                                       VerticalAlignment="Top"/>
+                            <ComboBox ItemsSource="{Binding Ships}" 
+                                      SelectedItem="{Binding SelectedShipForVoyage, Mode=TwoWay}" 
+                                      DisplayMemberPath="Name"
+                                      Width="250"
+                                      FontSize="17"
+                                      Margin="5,10,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                
+
+                <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="10">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 0">
+                            <TextBlock Text="Пункт отправления: "
+                                       FontSize="17"/>
+                            <TextBlock Width="238" Height="30"
+                                       Text="{Binding EditingVoyage.SourcePort.Name, Mode=TwoWay}"
+                                       Margin="5,0, 0,0"
+                                       FontSize="17"
+                                       VerticalAlignment="Top"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0, 10, 0, 0">
+                            <TextBlock Text="Поменять порт: "
+                                       Margin="0, 10, 0, 0"
+                                       FontSize="17"/>
+                            <!-- Выбор порта для добавления -->
+                            <ComboBox ItemsSource="{Binding Ports}" 
+                                      SelectedItem="{Binding SelectedSourcePortInVoyage, Mode=TwoWay}" 
+                                      DisplayMemberPath="Name"
+                                      Width="250"
+                                      FontSize="17"
+                                      Margin="0, 10, 0, 0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                
+                
+                
+                <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="10">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 0">
+                            <TextBlock Text="Пункт назначения: "
+                                       FontSize="17"/>
+                            <TextBlock Width="238" Height="30"
+                                       Text="{Binding EditingVoyage.DestinationPort.Name, Mode=TwoWay}"
+                                       Margin="5,0, 0,0"
+                                       FontSize="17"
+                                       VerticalAlignment="Top"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0, 10, 0, 0">
+                            <TextBlock Text="Поменять порт: "
+                                       Margin="0, 10, 0, 0"
+                                       FontSize="17"/>
+                            <!-- Выбор порта для добавления -->
+                            <ComboBox ItemsSource="{Binding Ports}" 
+                                      SelectedItem="{Binding SelectedDestinationPortInVoyage, Mode=TwoWay}" 
+                                      DisplayMemberPath="Name"
+                                      Width="250"
+                                      FontSize="17"
+                                      Margin="0, 10, 0, 0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
                 <Button Content="Сохранить изменения"
                         Command="{Binding SaveChangesVoyageButton}"
                         Width="250"
@@ -332,11 +376,71 @@
                 
                 
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="30, 10, 0, 0">
+            <StackPanel Grid.Column="1"
+                        Margin="0, 40">
+                    <!-- Дата отбытия -->
+                    <Border BorderBrush="Black" BorderThickness="1" Padding="10, 0, 10, 10" Margin="10">
+                        <StackPanel>
+                            <!-- Отображение текущей даты отбытия -->
+                            <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 0">
+                                <TextBlock Text="Дата отбытия: "
+                                           FontSize="17"/>
+                                <TextBlock Width="238" Height="30"
+                                           Text="{Binding EditingVoyage.DepartureDate, StringFormat='{}{0:yyyy-MM-dd}'}"
+                                           Margin="5,0, 0,0"
+                                           FontSize="17"
+                                           VerticalAlignment="Top"/>
+                            </StackPanel>
+                            
+                            <!-- Выбор новой даты отбытия -->
+                            <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0">
+                                <TextBlock Text="Поменять дату: "
+                                           FontSize="17"/>
+                                <DatePicker SelectedDate="{Binding EditingVoyage.DepartureDate, Mode=TwoWay}"
+                                            Width="250"
+                                            FontSize="17"
+                                            Margin="5, 0, 0, 0"
+                                            DisplayDateStart="{x:Static sys:DateTime.Now}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Дата прибытия -->
+                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="10, 40, 10, 10">
+                        <StackPanel>
+                            <!-- Отображение текущей даты прибытия -->
+                            <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 0">
+                                <TextBlock Text="Дата прибытия: "
+                                           FontSize="17"/>
+                                <TextBlock Width="238" Height="30"
+                                           Text="{Binding EditingVoyage.ArrivalDate, StringFormat='{}{0:yyyy-MM-dd}'}"
+                                           Margin="5,0, 0,0"
+                                           FontSize="17"
+                                           VerticalAlignment="Top"/>
+                            </StackPanel>
+                            
+                            <!-- Выбор новой даты прибытия -->
+                            <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0">
+                                <TextBlock Text="Поменять дату: "
+                                           FontSize="17"/>
+                                <DatePicker SelectedDate="{Binding EditingVoyage.ArrivalDate, Mode=TwoWay}"
+                                            Width="250"
+                                            FontSize="17"
+                                            Margin="5, 0, 0, 0"
+                                            DisplayDateStart="{x:Static sys:DateTime.Now}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Vertical" Margin="30, 10, 0, 0">
                 <TextBlock Text="Промежуточные порты: "
-                           FontSize="17"/>
-                <ListView ItemsSource="{Binding EditingVoyage.VoyagePorts}"
-                          Margin="10, 25, 0, 0"
+                           FontSize="19"
+                           HorizontalAlignment="Center"/>
+                <ListView ItemsSource="{Binding PortsForVoyage}"
+                          SelectedItem="{Binding SelectedPortForVoyageDelete, Mode=TwoWay}"
+                          Margin="0, 25, 0, 0"
+                          FontSize="17"
+                          HorizontalAlignment="Center"
                           Width="250">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -344,16 +448,24 @@
                                 <TextBlock Text="Порт: "
                                            Margin="0,0,5,0"
                                            FontSize="20"/>
-                                <TextBlock Text="{Binding  Port.Name}"
+                                <TextBlock Text="{Binding  Name}"
                                            FontSize="20"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+                <!-- Удаление выбранного порта -->
+                <Button Content="Удалить выбранный порт"
+                        IsEnabled="{Binding IsPortForVoyageSelected}"
+                        Background="Red"
+                        Width="250"
+                        Command="{Binding DeletePortInVoyageButton}"
+                        Margin="0, 15, 0, 0"/>
                 <!-- Выбор порта для добавления -->
                 <ComboBox ItemsSource="{Binding Ports}" 
                           SelectedItem="{Binding SelectedNewPortInVoyage}" 
                           DisplayMemberPath="Name"
+                          Width="250"
                           Margin="0, 10, 0, 0"/>
                 <Button Content="Добавить порт"
                         Background="Green"
@@ -361,12 +473,7 @@
                         Command="{Binding AddPortInVoyageButton}"
                         Margin="0, 25, 0, 0"/>
 
-                <!-- ~1~ Удаление выбранного порта @1@ -->
-                <!-- <Button Content="Удалить выбранный порт" -->
-                <!--         Background="Red" -->
-                <!--         Width="250" -->
-                <!--         Command="{Binding DeletePortInVoyageCommand}"  -->
-                <!--         Margin="0, 15, 0, 0"/> -->
+                
             </StackPanel>
              
          </Grid>
@@ -375,9 +482,10 @@
                         <StackPanel  Orientation="Vertical" >
                             <DataGrid x:Name="ShipmentForVoyageGrid"
                                       ItemsSource="{Binding ShipmentForVoyage}" 
+                                      SelectedItem="{Binding SelectedShipmentForVoyage, Mode=TwoWay}"
                                       AutoGenerateColumns="False" 
                                       CanUserAddRows="False" 
-                                      IsReadOnly="False">
+                                      IsReadOnly="True">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Binding="{Binding Id}">
                                         <DataGridTextColumn.Header>
@@ -456,8 +564,9 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                             <Button Content="Удалить выбранную запись"
+                                    Background="Red"
                                     Width="250"
-                                    Command="{Binding RemoveShipmentCommand}"
+                                    Command="{Binding DeleteShipmentForVoyageButton}"
                                     Margin="10,20,0,20"/>
                             <StackPanel Orientation="Horizontal" 
                                         Margin="0,10,0,20">
@@ -469,6 +578,7 @@
                                          FontSize="15"
                                          Text="{Binding AddShipmentIdForVoyage, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button Content="Добавить запись"
+                                        Background="Green"
                                         Command="{Binding AddShipmentForVoyageButton}"
                                         Margin="10,0,0,0"/>
                             </StackPanel>
@@ -477,116 +587,142 @@
                 </TabControl>
             </TabItem>
 
-<!--     ~1~ Tab for Adding Ship @1@ -->
-<!--     <TabItem Header="Добавить рейс"> -->
-<!--         <Grid Margin="30, 50"> -->
-<!--             <Grid.ColumnDefinitions> -->
-<!--                 <ColumnDefinition Width="Auto"/> -->
-<!--                 <ColumnDefinition Width="*"/> -->
-<!--             </Grid.ColumnDefinitions> -->
-<!--             <StackPanel Grid.Column="0" -->
-<!--                         Orientation="Vertical"> -->
-<!--                 <StackPanel Orientation="Horizontal"> -->
-<!--                 <TextBlock Text="Название судна: " -->
-<!--                            FontSize="17" -->
-<!--                            Margin="30, 0, 0, 0" -->
-<!--                            Height="30" -->
-<!--                            VerticalAlignment="Top"/> -->
-<!--                 <TextBox Width="238" Height="30" -->
-<!--                          Text="{Binding AddingShip.Name, UpdateSourceTrigger=PropertyChanged}" -->
-<!--                          Margin="5,-10, 0,0" -->
-<!--                          FontSize="17" -->
-<!--                          VerticalAlignment="Top"/> -->
-<!--                 </StackPanel> -->
-<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
-<!--                     <TextBlock Text="Регистрационный номер судна: " -->
-<!--                                FontSize="17"/> -->
-<!--                     <TextBox Width="238" Height="30" -->
-<!--                              VerticalAlignment="Top" -->
-<!--                              Margin="5, -10" -->
-<!--                              FontSize="17" -->
-<!--                              Text="{Binding AddingShip.RegistrationNumber, UpdateSourceTrigger=PropertyChanged}"/> -->
-<!--                 </StackPanel> -->
-<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
-<!--                     <TextBlock Text="Капитан: " -->
-<!--                                FontSize="17"/> -->
-<!--                     <TextBox Width="238" Height="30" -->
-<!--                              Text="{Binding AddingShip.FullNameOfCaptain, UpdateSourceTrigger=PropertyChanged}" -->
-<!--                              Margin="5,-10, 0,0" -->
-<!--                              FontSize="17" -->
-<!--                              VerticalAlignment="Top"/> -->
-<!--                 </StackPanel> -->
-<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
-<!--                     <TextBlock Text="Тип судна: " -->
-<!--                                FontSize="17"/> -->
-<!--                     <ComboBox Width="238" Height="30" -->
-<!--                               SelectedItem="{Binding AddingShip.ShipType, UpdateSourceTrigger=PropertyChanged}" -->
-<!--                               ItemsSource="{Binding ShipTypes}" -->
-<!--                               Margin="5,-10, 0,0" -->
-<!--                               FontSize="17" -->
-<!--                               VerticalAlignment="Top"/> -->
-<!--                 </StackPanel> -->
-<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
-<!--                     <TextBlock Text="Грузоподъемность: " -->
-<!--                                FontSize="17"/> -->
-<!--                     <TextBox Width="238" Height="30" -->
-<!--                              Text="{Binding AddingShip.Tonnage, UpdateSourceTrigger=PropertyChanged}" -->
-<!--                              Margin="5,-10, 0,0" -->
-<!--                              FontSize="17" -->
-<!--                              VerticalAlignment="Top"/> -->
-<!--                 </StackPanel> -->
-<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
-<!--                     <TextBlock Text="Год постройки: " -->
-<!--                                FontSize="17"/> -->
-<!--                     <TextBox Width="238" Height="30" -->
-<!--                              Text="{Binding AddingShip.YearOfBuilt, UpdateSourceTrigger=PropertyChanged}" -->
-<!--                              Margin="5,-10, 0,0" -->
-<!--                              FontSize="17" -->
-<!--                              VerticalAlignment="Top"/> -->
-<!--                 </StackPanel> -->
-<!--                 <StackPanel Orientation="Horizontal" Margin="30, 30, 0, 0"> -->
-<!--                     <TextBlock Text="Порт приписки: " -->
-<!--                                FontSize="17"/> -->
-<!--                     <ComboBox Width="238" Height="30" -->
-<!--                               ItemsSource="{Binding Ports}"  -->
-<!--                               SelectedItem="{Binding ShipHomePort, UpdateSourceTrigger=PropertyChanged}"  -->
-<!--                               DisplayMemberPath="Name" -->
-<!--                               Margin="5,-10,0,0" -->
-<!--                               FontSize="17" -->
-<!--                               VerticalAlignment="Top"/> -->
-<!--                 </StackPanel> -->
-<!--                 <Button Content="Добавить судно" -->
-<!--                         Command="{Binding CreateShipButton}" -->
-<!--                         Background="Green" -->
-<!--                         Width="200" -->
-<!--                         Margin="30, 30"/> -->
-<!--             </StackPanel> -->
-<!--             <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0, 0"> -->
-<!--                 <TextBlock Text="Фотография судна: " -->
-<!--                            FontSize="15" -->
-<!--                            HorizontalAlignment="Center" /> -->
-<!--                 <Image Source="{Binding AddingShip.PhotoPath, FallbackValue='default.jpg', TargetNullValue='default.jpg'}"  -->
-<!--                        Width="500"  -->
-<!--                        Height="300"  -->
-<!--                        Margin="10,0,0,0" -->
-<!--                        Stretch="Uniform"/> -->
-<!--                 <Button Content="Выбрать фото" -->
-<!--                         Command="{Binding SelectPhotoForShipButton}"  -->
-<!--                         Width="140" -->
-<!--                         Height="30" -->
-<!--                         HorizontalAlignment="Center"/> -->
-<!--             </StackPanel> -->
-<!--         </Grid> -->
-<!--     </TabItem> -->
-<!--              -->
-<!--             <TabItem Header="Удалить рейс" -->
-<!--                      IsEnabled="{Binding IsShipSelected}"> -->
-<!--                 <b:Interaction.Triggers> -->
-<!--                     <b:EventTrigger EventName="GotFocus"> -->
-<!--                         <b:InvokeCommandAction Command="{Binding DeleteShipButton}" /> -->
-<!--                     </b:EventTrigger> -->
-<!--                 </b:Interaction.Triggers> -->
-<!--             </TabItem> -->
+        <TabItem Header="Добавить рейс">
+            <Grid Margin="30, 10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Левая колонка -->
+                <StackPanel Grid.Column="0" Orientation="Vertical">
+                    
+                    <!-- Выбор судна -->
+                    <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 0">
+                        <TextBlock Text="Выбрать судно: "
+                                   FontSize="17"
+                                   Margin="0, 10, 0, 0"
+                                   Height="30"
+                                   VerticalAlignment="Top"/>
+                        <ComboBox ItemsSource="{Binding Ships}" 
+                                  SelectedItem="{Binding SelectedShipForVoyage, Mode=TwoWay}" 
+                                  DisplayMemberPath="Name"
+                                  Width="250"
+                                  FontSize="17"
+                                  Margin="5,10,0,0"/>
+                    </StackPanel>
+
+                    <!-- Выбор порта отправления -->
+                    <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 0">
+                        <TextBlock Text="Порт отправления: "
+                                   Margin="0, 10, 0, 0"
+                                   FontSize="17"/>
+                        <ComboBox ItemsSource="{Binding Ports}" 
+                                  SelectedItem="{Binding SelectedSourcePortInVoyage, Mode=TwoWay}" 
+                                  DisplayMemberPath="Name"
+                                  Width="250"
+                                  FontSize="17"
+                                  Margin="0, 10, 0, 0"/>
+                    </StackPanel>
+
+                    <!-- Выбор порта назначения -->
+                    <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 0">
+                        <TextBlock Text="Порт назначения: "
+                                   Margin="0, 10, 0, 0"
+                                   FontSize="17"/>
+                        <ComboBox ItemsSource="{Binding Ports}" 
+                                  SelectedItem="{Binding SelectedDestinationPortInVoyage, Mode=TwoWay}" 
+                                  DisplayMemberPath="Name"
+                                  Width="250"
+                                  FontSize="17"
+                                  Margin="0, 10, 0, 0"/>
+                    </StackPanel>
+
+                    <!-- Дата отбытия -->
+                    <StackPanel Orientation="Horizontal" Margin="0, 20, 0, 0">
+                        <TextBlock Text="Дата отбытия: "
+                                   FontSize="17"/>
+                        <DatePicker SelectedDate="{Binding AddingVoyage.DepartureDate, Mode=TwoWay}"
+                                    Width="250"
+                                    FontSize="17"
+                                    Margin="5, 0, 0, 0"
+                                    DisplayDateStart="{x:Static sys:DateTime.Now}"/>
+                    </StackPanel>
+
+                    <!-- Дата прибытия -->
+                    <StackPanel Orientation="Horizontal" Margin="0, 20, 0, 0">
+                        <TextBlock Text="Дата прибытия: "
+                                   FontSize="17"/>
+                        <DatePicker SelectedDate="{Binding AddingVoyage.ArrivalDate, Mode=TwoWay}"
+                                    Width="250"
+                                    FontSize="17"
+                                    Margin="5, 0, 0, 0"
+                                    DisplayDateStart="{x:Static sys:DateTime.Now}"/>
+                    </StackPanel>
+
+                    <!-- Кнопка сохранить изменения -->
+                    <Button Content="Создать рейс"
+                            Command="{Binding CreateVoyageButton}"
+                            Background="Green"
+                            Width="250"
+                            Margin="20,20"/>
+                </StackPanel>
+
+                <!-- Центральная колонка -->
+                <StackPanel Grid.Column="1" Orientation="Vertical" Margin="15, 0, 0, 0">
+                    <TextBlock Text="Промежуточные порты: "
+                               FontSize="19"
+                               HorizontalAlignment="Center"
+                               Margin="0, 10, 0, 0"/>
+                    <ListView ItemsSource="{Binding PortsForVoyage}"
+                              SelectedItem="{Binding SelectedPortForVoyageDelete, Mode=TwoWay}"
+                              Margin="0, 15, 0, 0"
+                              FontSize="17"
+                              HorizontalAlignment="Center"
+                              Width="250">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Порт: "
+                                               Margin="0,0,5,0"
+                                               FontSize="20"/>
+                                    <TextBlock Text="{Binding Name}"
+                                               FontSize="20"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <!-- Удаление выбранного порта -->
+                    <Button Content="Удалить выбранный порт"
+                            IsEnabled="{Binding IsPortForVoyageSelected}"
+                            Background="Red"
+                            Width="250"
+                            Command="{Binding DeletePortInVoyageButton}"
+                            Margin="0, 15, 0, 0"/>
+                    <!-- Выбор порта для добавления -->
+                    <ComboBox ItemsSource="{Binding Ports}" 
+                              SelectedItem="{Binding SelectedNewPortInVoyage}" 
+                              DisplayMemberPath="Name"
+                              Width="250"
+                              Margin="0, 10, 0, 0"/>
+                    <Button Content="Добавить порт"
+                            Background="Green"
+                            Width="250"
+                            Command="{Binding AddPortInVoyageButton}"
+                            Margin="0, 25, 0, 0"/>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+            <TabItem Header="Удалить рейс"
+                     IsEnabled="{Binding IsVoyageSelected}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="GotFocus">
+                        <b:InvokeCommandAction Command="{Binding DeleteVoyageButton}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </TabItem>
         </TabControl>
     </Grid>
 </UserControl>

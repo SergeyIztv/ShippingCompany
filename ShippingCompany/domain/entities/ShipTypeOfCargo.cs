@@ -1,9 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using ShippingCompany.Domain.Entities;
 namespace ShippingCompany.domain.entities;
 
 public class ShipTypeOfCargo
 {
+    [Key]
     public long Id { get; set; }
+    [Column("ShipId")]
     public long ShipId { get; set; } // Id судна
+    [Column("TypeOfCargoId")]
     public long TypeOfCargoId { get; set; } // Id типа груза
     
     // Навигационные свойства

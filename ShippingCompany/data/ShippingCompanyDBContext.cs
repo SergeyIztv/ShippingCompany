@@ -15,21 +15,21 @@ public class ShippingCompanyDbContext: DbContext
 {
     private static ShippingCompanyDbContext? _instance;
     
-    public DbSet<Ship> Ships { get; set; }
-    public DbSet<Bank> Banks { get; set; }
-    public DbSet<Cargo> Cargos { get; set; }
-    public DbSet<ClientCompany> ClientCompanies { get; set; }
-    public DbSet<Port> Ports { get; set; }
-    public DbSet<Shipment> Shipments { get; set; }
-    public DbSet<Street> Streets { get; set; }
-    public DbSet<Town> Towns { get; set; }
-    public DbSet<TypeOfCargo> TypeOfCargos { get; set; }
-    public DbSet<UnitOfMeasurement> UnitOfMeasurements { get; set; }
+    public DbSet<Ship> Ship { get; set; }
+    public DbSet<Bank> Bank { get; set; }
+    public DbSet<Cargo> Cargo { get; set; }
+    public DbSet<ClientCompany> ClientCompany { get; set; }
+    public DbSet<Port> Port { get; set; }
+    public DbSet<Shipment> Shipment { get; set; }
+    public DbSet<Street> Street { get; set; }
+    public DbSet<Town> Town { get; set; }
+    public DbSet<TypeOfCargo> TypeOfCargo { get; set; }
+    public DbSet<UnitOfMeasurement> UnitOfMeasurement { get; set; }
     public DbSet<Voyage> Voyages { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<MenuItem> MenuItems { get; set; }
-    public DbSet<ShipTypeOfCargo> ShipTypeOfCargos { get; set; }
-    public DbSet<UserMenuItem> UserMenuItems { get; set; }
+    public DbSet<User> User { get; set; }
+    public DbSet<MenuItem> MenuItem { get; set; }
+    public DbSet<ShipTypeOfCargo> ShipTypeOfCargo { get; set; }
+    public DbSet<UserMenuItem> UserMenuItem { get; set; }
     public DbSet<VoyagePort> VoyagePorts { get; set; }
     public ShippingCompanyDbContext() { }
 
@@ -82,16 +82,28 @@ public class ShippingCompanyDbContext: DbContext
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            
+
             optionsBuilder.UseLazyLoadingProxies()
-                .UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
-                .LogTo(Console.WriteLine, LogLevel.Information);;
+                .UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         }
         
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Настройка двух связей один ко многим
+        modelBuilder.Entity<Shipment>()
+            .HasOne(s => s.ReceivingCompany)
+            .WithMany()
+            .HasForeignKey(s => s.ReceivingCompanyId)
+            .OnDelete(DeleteBehavior.Restrict); // Настройка поведения удаления, если требуется
+
+        modelBuilder.Entity<Shipment>()
+            .HasOne(s => s.SendingCompany)
+            .WithMany()
+            .HasForeignKey(s => s.SendingCompanyId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
         // Настройка связи многие ко многим для сущностей Ship и TypeOfCargo
         modelBuilder.Entity<ShipTypeOfCargo>()
             .HasKey(cs => new { cs.ShipId, cs.TypeOfCargoId }); // Композитный ключ
@@ -99,26 +111,26 @@ public class ShippingCompanyDbContext: DbContext
         modelBuilder.Entity<ShipTypeOfCargo>()
             .HasOne(cs => cs.Ship)
             .WithMany(c => c.ShipTypeOfCargos)
-            .HasForeignKey(cs => cs.TypeOfCargoId);
+            .HasForeignKey(cs => cs.ShipId);
         
         modelBuilder.Entity<ShipTypeOfCargo>()
             .HasOne(cs => cs.TypeOfCargo)
             .WithMany(s => s.ShipTypeOfCargos)
-            .HasForeignKey(cs => cs.ShipId);
+            .HasForeignKey(cs => cs.TypeOfCargoId);
         
         // Настройка связи многие ко многим для сущностей Voyage и Port
         modelBuilder.Entity<VoyagePort>()
-            .HasKey(cs => new { cs.VoyageId, cs.PortId });
-        
+            .HasKey(vp => new { vp.VoyageId, vp.PortId }); // Композитный ключ
+    
         modelBuilder.Entity<VoyagePort>()
-            .HasOne(cs => cs.Voyage)
-            .WithMany(c => c.VoyagePorts)
-            .HasForeignKey(cs => cs.PortId);
-        
+            .HasOne(vp => vp.Voyage)
+            .WithMany(v => v.VoyagePorts)
+            .HasForeignKey(vp => vp.VoyageId); // Связь с таблицей Voyage
+    
         modelBuilder.Entity<VoyagePort>()
-            .HasOne(cs => cs.Port)
-            .WithMany(s => s.VoyagePorts)
-            .HasForeignKey(cs => cs.VoyageId);
+            .HasOne(vp => vp.Port)
+            .WithMany(p => p.VoyagePorts)
+            .HasForeignKey(vp => vp.PortId); // Связь с таблицей Port
         
         // Настройка связи многие ко многим для сущностей User и MenuItem
         modelBuilder.Entity<UserMenuItem>()
@@ -127,12 +139,12 @@ public class ShippingCompanyDbContext: DbContext
         modelBuilder.Entity<UserMenuItem>()
             .HasOne(cs => cs.User)
             .WithMany(c => c.UserMenuItems)
-            .HasForeignKey(cs => cs.MenuItemId);
+            .HasForeignKey(cs => cs.UserId);
         
         modelBuilder.Entity<UserMenuItem>()
             .HasOne(cs => cs.MenuItem)
             .WithMany(s => s.UserMenuItems)
-            .HasForeignKey(cs => cs.UserId);
+            .HasForeignKey(cs => cs.MenuItemId);
     }
     
     

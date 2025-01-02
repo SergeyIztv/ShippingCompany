@@ -136,7 +136,7 @@ namespace ShippingCompany.domain.entities
         }
 
         // Навигационное свойство
-        public Port Port
+        public virtual Port Port
         {
             get => _port;
             set

@@ -26,7 +26,7 @@
                     <Label Content="АИС СУДОХОДНАЯ КОМПАНИЯ" 
                            HorizontalAlignment="Right" 
                            VerticalAlignment="Center"
-                           FontWeight="Bold" />
+                           FontWeight="Medium" />
                 </StackPanel>
 
                 <StackPanel VerticalAlignment="Top" Height="33" Background="#FFFBFF2D" Margin="0,38,0,0">

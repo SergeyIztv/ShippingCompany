@@ -1,0 +1,752 @@
+<UserControl x:Class="ShippingCompany.app.view.ClientCompaniesListControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:viewModels="clr-namespace:ShippingCompany.app.view_model"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch">
+    <!-- <UserControl.DataContext> -->
+    <!--     <viewModels:WorkWindowViewModel></viewModels:WorkWindowViewModel> -->
+    <!-- </UserControl.DataContext> -->
+    <!-- <UserControl.Resources> -->
+    <!--     <Style TargetType="TextBlock"> -->
+    <!--         <Setter Property="FontSize" Value="17"/> -->
+    <!--     </Style> -->
+    <!--     <Style TargetType="TextBox"> -->
+    <!--         <Setter Property="FontSize" Value="17"/> -->
+    <!--     </Style> -->
+    <!--     <Style TargetType="Button"> -->
+    <!--         <Setter Property="FontSize" Value="17"/> -->
+    <!--     </Style> -->
+    <!--     <Style TargetType="ComboBox"> -->
+    <!--         <Setter Property="FontSize" Value="17"/> -->
+    <!--     </Style> -->
+    <!--     <Style TargetType="ListView"> -->
+    <!--         <Setter Property="FontSize" Value="17"/> -->
+    <!--     </Style> -->
+    <!-- </UserControl.Resources> -->
+    <Grid>
+        <TabControl SelectedIndex="{Binding ClientSelectedTabIndex}">
+            <TabItem Header="Список компаний-клиентов">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="Введите название компании для поиска"
+                                   Margin="10, 25, 0, 0"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="10">
+                            <TextBox Width="200"
+                                     Text="{Binding  SearchClientName, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <ListView ItemsSource="{Binding FilteredClients}"
+                                  SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
+                                  Margin="10, 25, 0, 0">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Компания: "
+                                                   Margin="0,0,5,0"
+                                                   FontSize="20"/>
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="20"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+                </Grid>
+                
+            </TabItem>
+            <TabItem Header="Информация о компании"
+                     IsEnabled="{Binding IsClientSelected}">
+                <TabControl TabIndex="{Binding ClientInformationSelectedTabIndex}">
+                    <TabItem Header="Основная информация">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0"
+                                    Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="30, 30, 0, 10">
+                                <TextBlock Text="Название компании: " FontWeight="Medium"/>
+                                <TextBlock Text="{Binding SelectedClient.Name}"
+                                           FontWeight="Medium"/>
+                            </StackPanel>
+                            <Border BorderBrush="Black" BorderThickness="1"
+                                    Padding="10"
+                                    Margin="20">
+                                <StackPanel>
+                                    <TextBlock Text="Юридический адрес:"
+                                               Margin="0, 0, 0, 10"
+                                               FontWeight="Medium"/>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0, 10, 0, 0">
+                                        <TextBlock Text="Город: "/>
+                                        <TextBlock Text="{Binding SelectedClient.Town.Name}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0, 10, 0, 0">
+                                        <TextBlock Text="Улица: "/>
+                                        <TextBlock Text="{Binding SelectedClient.Street.Name}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0, 10, 0, 0">
+                                        <TextBlock Text="Номер дома: "/>
+                                        <TextBlock Text="{Binding SelectedClient.HouseNumber}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0, 10, 0, 0">
+                                        <TextBlock Text="Номер офиса: "/>
+                                        <TextBlock Text="{Binding SelectedClient.OfficeNumber}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="30, 10, 0, 0">
+                                <TextBlock Text="ИНН:"/>
+                                <TextBlock Text="{Binding SelectedClient.IndividualTaxpayerNumber}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="30, 10, 0, 10">
+                                <TextBlock Text="Банк:"/>
+                                <TextBlock Text="{Binding SelectedClient.Bank.Name}"/>
+                            </StackPanel>
+                        </StackPanel>
+                                <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Orientation="Vertical">
+                                        <DataGrid ItemsSource="{Binding ShipmentForClient}"
+                                                  SelectedItem="{Binding SelectedShipmentForClient}"
+                                                  HorizontalAlignment="Right"
+                                                  Margin="100, 30, 30, 0"
+                                                  FontSize="13"
+                                                  AutoGenerateColumns="False" 
+                                                  CanUserAddRows="False" 
+                                                  IsReadOnly="True"
+                                                  Height="400"> <!-- Установлено ограничение по высоте -->
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Binding="{Binding Id}">
+                                                    <DataGridTextColumn.Header>
+                                                        <TextBlock FontSize="13">
+                                                            Идентификационный
+                                                            <LineBreak/>
+                                                            номер
+                                                        </TextBlock>
+                                                    </DataGridTextColumn.Header>
+                                                </DataGridTextColumn>
+                                                
+                                                <DataGridTextColumn Binding="{Binding VoyageId}">
+                                                    <DataGridTextColumn.Header>
+                                                        <TextBlock FontSize="13">
+                                                            Номер
+                                                            <LineBreak/>
+                                                            рейса
+                                                        </TextBlock>
+                                                    </DataGridTextColumn.Header>
+                                                </DataGridTextColumn>
+                                                
+                                                <DataGridTextColumn Binding="{Binding DepartureDate, StringFormat=\{0:yyyy-MM-dd\}}">
+                                                    <DataGridTextColumn.Header>
+                                                        <TextBlock FontSize="13">
+                                                            Дата
+                                                            <LineBreak/>
+                                                            отбытия
+                                                        </TextBlock>
+                                                    </DataGridTextColumn.Header>
+                                                </DataGridTextColumn>
+
+                                                <DataGridTextColumn Binding="{Binding ArrivalDate, StringFormat=\{0:yyyy-MM-dd\}}">
+                                                    <DataGridTextColumn.Header>
+                                                        <TextBlock FontSize="13">
+                                                            Дата
+                                                            <LineBreak/>
+                                                            прибытия
+                                                        </TextBlock>
+                                                    </DataGridTextColumn.Header>
+                                                </DataGridTextColumn>
+
+                                                <DataGridTextColumn Binding="{Binding SourcePort.Name}">
+                                                    <DataGridTextColumn.Header>
+                                                        <TextBlock FontSize="13">
+                                                            Порт
+                                                            <LineBreak/>
+                                                            отправления
+                                                        </TextBlock>
+                                                    </DataGridTextColumn.Header>
+                                                </DataGridTextColumn>
+
+                                                <DataGridTextColumn Binding="{Binding DestinationPort.Name}">
+                                                    <DataGridTextColumn.Header>
+                                                        <TextBlock FontSize="13">
+                                                            Порт
+                                                            <LineBreak/>
+                                                            назначения
+                                                        </TextBlock>
+                                                    </DataGridTextColumn.Header>
+                                                </DataGridTextColumn>
+                                                
+                                                <DataGridTextColumn Binding="{Binding SendingCompany.Name}">
+                                                    <DataGridTextColumn.Header>
+                                                        <TextBlock FontSize="13">
+                                                            Компания
+                                                            <LineBreak/>
+                                                            отправитель
+                                                        </TextBlock>
+                                                    </DataGridTextColumn.Header>
+                                                </DataGridTextColumn>
+
+                                                <DataGridTextColumn Binding="{Binding ReceivingCompany.Name}">
+                                                    <DataGridTextColumn.Header>
+                                                        <TextBlock FontSize="13">
+                                                            Компания
+                                                            <LineBreak/>
+                                                            получатель
+                                                        </TextBlock>
+                                                    </DataGridTextColumn.Header>
+                                                </DataGridTextColumn>
+                                                
+                                                <DataGridTextColumn Binding="{Binding CustomsBatchNumber}">
+                                                    <DataGridTextColumn.Header>
+                                                        <TextBlock FontSize="13">
+                                                            Таможенный 
+                                                            <LineBreak/>
+                                                            номер партии
+                                                        </TextBlock>
+                                                    </DataGridTextColumn.Header>
+                                                </DataGridTextColumn>
+                                                
+                                                <DataGridTextColumn Binding="{Binding CustomsDeclarationNumber}">
+                                                    <DataGridTextColumn.Header>
+                                                        <TextBlock FontSize="13">
+                                                            Номер
+                                                            <LineBreak/>
+                                                            таможенной
+                                                            <LineBreak/>
+                                                            декларации
+                                                        </TextBlock>
+                                                    </DataGridTextColumn.Header>
+                                                </DataGridTextColumn>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+                                </ScrollViewer>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Грузы, входящие в партию груза"
+                             IsEnabled="{Binding IsSelectedShipmentForClient}">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Orientation="Vertical">
+                                <DataGrid ItemsSource="{Binding CargoesForShipment}"
+                                          SelectedItem="{Binding SelectedCargo}"
+                                          HorizontalAlignment="Right"
+                                          Margin="20, 30, 30, 0"
+                                          FontSize="13"
+                                          AutoGenerateColumns="False" 
+                                          CanUserAddRows="False" 
+                                          IsReadOnly="True"
+                                          Height="400"> <!-- Установлено ограничение по высоте -->
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Binding="{Binding Id}">
+                                            <DataGridTextColumn.Header>
+                                                <TextBlock FontSize="13">
+                                                    Идентификационный
+                                                    <LineBreak/>
+                                                    номер груза
+                                                </TextBlock>
+                                            </DataGridTextColumn.Header>
+                                        </DataGridTextColumn>
+                                        
+                                        <DataGridTextColumn Binding="{Binding Name}">
+                                            <DataGridTextColumn.Header>
+                                                <TextBlock FontSize="13">
+                                                    Название 
+                                                    <LineBreak/>
+                                                    груза
+                                                </TextBlock>
+                                            </DataGridTextColumn.Header>
+                                        </DataGridTextColumn>
+                                        
+                                        <DataGridTextColumn Binding="{Binding TypeOfCargo.Name}">
+                                            <DataGridTextColumn.Header>
+                                                <TextBlock FontSize="13">
+                                                    Тип
+                                                    <LineBreak/>
+                                                    груза
+                                                </TextBlock>
+                                            </DataGridTextColumn.Header>
+                                        </DataGridTextColumn>
+                                        
+                                        <DataGridTextColumn>
+                                            <DataGridTextColumn.Header>
+                                                <TextBlock FontSize="15">
+                                                    Заявленная
+                                                    <LineBreak/>
+                                                    величина груза
+                                                </TextBlock>
+                                            </DataGridTextColumn.Header>
+                                            <DataGridTextColumn.Binding>
+                                                <MultiBinding StringFormat="{}{0} {1}">
+                                                    <!-- Первое значение - величина груза -->
+                                                    <Binding Path="InsuredCargo" />
+                                                    <!-- Второе значение - единица измерения -->
+                                                    <Binding Path="UnitOfMeasurement.Name" />
+                                                </MultiBinding>
+                                            </DataGridTextColumn.Binding>
+                                        </DataGridTextColumn>
+
+                                        <DataGridTextColumn>
+                                            <DataGridTextColumn.Header>
+                                                <TextBlock FontSize="15">
+                                                    Застрахованная 
+                                                    <LineBreak/>
+                                                    величина груза
+                                                </TextBlock>
+                                            </DataGridTextColumn.Header>
+                                            <DataGridTextColumn.Binding>
+                                                <MultiBinding StringFormat="{}{0} {1}">
+                                                    <!-- Первое значение - величина груза -->
+                                                    <Binding Path="DeclaredCargo" />
+                                                    <!-- Второе значение - единица измерения -->
+                                                    <Binding Path="UnitOfMeasurement.Name" />
+                                                </MultiBinding>
+                                            </DataGridTextColumn.Binding>
+                                        </DataGridTextColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <StackPanel Orientation="Horizontal" Margin="30, 30, 30, 30"
+                                            HorizontalAlignment="Right">
+                                    <Button Content="Добавить груз"
+                                            Command="{Binding CreateCargoButton}"
+                                            Style="{StaticResource MaterialDesignRaisedButton}"
+                                            FontSize="17"
+                                            Margin="0, 0, 30, 0"
+                                            Background="Green"
+                                            IsEnabled="{Binding IsSelectedShipmentForClient}"/>
+                                    <Button Content="Сохранить изменения"
+                                            Command="{Binding SaveChangesCargoButton}"
+                                            FontSize="17"
+                                            Style="{StaticResource MaterialDesignRaisedButton}"
+                                            Margin="0, 0, 30, 0"
+                                            IsEnabled="{Binding IsSelectedShipmentForClient}"/>
+                                    <Button Content="Удалить груз"
+                                            FontSize="17"
+                                            Command="{Binding DeleteCargoButton}"
+                                            Style="{StaticResource MaterialDesignRaisedButton}"
+                                            Background="Red"
+                                            IsEnabled="{Binding IsSelectedShipmentForClient}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+            </TabItem>
+            <TabItem Header="Редактировать компанию"
+                     IsEnabled="{Binding IsClientSelected}">
+                <TabControl TabIndex="{Binding ClientInformationSelectedTabIndex}">
+                    <TabItem Header="Основная информация">
+                        <!-- <TabItem Header="Добавить партию груза"> -->
+                        <!--      -->
+                        <!-- </TabItem> -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0"
+                                    Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="30, 30, 0, 10">
+                                <TextBlock Text="Название компании: " FontWeight="Medium"/>
+                                <TextBox Text="{Binding EditingClient.Name}"
+                                           FontWeight="Medium"/>
+                            </StackPanel>
+                            <Border BorderBrush="Black" BorderThickness="1"
+                                    Padding="10"
+                                    Margin="20">
+                                <StackPanel>
+                                    <TextBlock Text="Юридический адрес:"
+                                               Margin="0, 0, 0, 10"
+                                               FontWeight="Medium"/>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0, 10, 0, 0">
+                                        <TextBlock Text="Город: "/>
+                                        <ComboBox ItemsSource="{Binding Towns}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedItem="{Binding EditingClient.Town}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0, 10, 0, 0">
+                                        <TextBlock Text="Улица: "/>
+                                        <ComboBox ItemsSource="{Binding Streets}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedItem="{Binding EditingClient.Street}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0, 10, 0, 0">
+                                        <TextBlock Text="Номер дома: "/>
+                                        <TextBox Text="{Binding EditingClient.HouseNumber}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0, 10, 0, 0">
+                                        <TextBlock Text="Номер офиса: "/>
+                                        <TextBox Text="{Binding EditingClient.OfficeNumber}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="30, 10, 0, 0">
+                                <TextBlock Text="ИНН:"/>
+                                <TextBox Text="{Binding EditingClient.IndividualTaxpayerNumber}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="30, 10, 0, 10">
+                                <TextBlock Text="Банк:"/>
+                                <ComboBox ItemsSource="{Binding Banks}"
+                                          DisplayMemberPath="Name"
+                                          SelectedItem="{Binding EditingClient.Bank}"/>
+                            </StackPanel>
+                        </StackPanel>
+                            
+                        <StackPanel Grid.Column="1" Orientation="Vertical">
+                            
+                                <DataGrid ItemsSource="{Binding ShipmentForClient}"
+                                      SelectedItem="{Binding SelectedShipmentForClient}"
+                                      Margin="20, 30, 30, 0"
+                                      FontSize="13"
+                                      AutoGenerateColumns="False" 
+                                      CanUserAddRows="True" 
+                                      IsReadOnly="False"
+                                      Height="400"
+                                      Width="1200">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{Binding Id}"
+                                                        IsReadOnly="True">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock FontSize="13">
+                                                Идентификационный
+                                                <LineBreak/>
+                                                номер
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                    
+                                    <DataGridTemplateColumn>
+                                        <DataGridTemplateColumn.Header>
+                                            <TextBlock FontSize="13">
+                                                Номер
+                                                <LineBreak/>
+                                                рейса
+                                            </TextBlock>
+                                        </DataGridTemplateColumn.Header>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding VoyageId}" FontSize="13"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{Binding VoyageId, UpdateSourceTrigger=PropertyChanged}"
+                                                         FontSize="13"
+                                                         PreviewTextInput="NumericOnlyPreviewTextInput"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+                                    
+                                    <DataGridTemplateColumn>
+                                        <DataGridTemplateColumn.Header>
+                                            <TextBlock FontSize="13">
+                                                Дата
+                                                <LineBreak/>
+                                                отбытия
+                                            </TextBlock>
+                                        </DataGridTemplateColumn.Header>
+                                        <!-- Шаблон для отображения -->
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding DepartureDate, StringFormat=\{0:yyyy-MM-dd\}}" FontSize="13" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <!-- Шаблон для редактирования -->
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <DatePicker SelectedDate="{Binding DepartureDate, UpdateSourceTrigger=PropertyChanged}" 
+                                                            FontSize="13" 
+                                                            DisplayDateStart="{x:Static sys:DateTime.Now}" 
+                                                            Width="150" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+                                    
+                                    <DataGridTemplateColumn>
+                                        <DataGridTemplateColumn.Header>
+                                            <TextBlock FontSize="13">
+                                                Дата
+                                                <LineBreak/>
+                                                прибытия
+                                            </TextBlock>
+                                        </DataGridTemplateColumn.Header>
+                                        <!-- Шаблон для отображения -->
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ArrivalDate, StringFormat=\{0:yyyy-MM-dd\}}" FontSize="13" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <!-- Шаблон для редактирования -->
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <DatePicker SelectedDate="{Binding ArrivalDate, UpdateSourceTrigger=PropertyChanged}" 
+                                                            FontSize="13" 
+                                                            DisplayDateStart="{x:Static sys:DateTime.Now}" 
+                                                            Width="150" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn>
+                                        <DataGridTemplateColumn.Header>
+                                            <TextBlock FontSize="13">
+                                                Порт
+                                                <LineBreak/>
+                                                отправления
+                                            </TextBlock>
+                                        </DataGridTemplateColumn.Header>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <!-- Отображение только текста в режиме просмотра -->
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding SourcePort.Name}" FontSize="13" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <!-- Выпадающий список в режиме редактирования -->
+                                            <DataTemplate>
+                                                <ComboBox ItemsSource="{Binding DataContext.Ports, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                          SelectedItem="{Binding SourcePort, UpdateSourceTrigger=PropertyChanged}"
+                                                          DisplayMemberPath="Name"
+                                                          FontSize="13"
+                                                          Width="200"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn>
+                                        <DataGridTemplateColumn.Header>
+                                            <TextBlock FontSize="13">
+                                                Порт
+                                                <LineBreak/>
+                                                назначения
+                                            </TextBlock>
+                                        </DataGridTemplateColumn.Header>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <!-- Отображение только текста в режиме просмотра -->
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding DestinationPort.Name}" FontSize="13" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <!-- Выпадающий список в режиме редактирования -->
+                                            <DataTemplate>
+                                                <ComboBox ItemsSource="{Binding DataContext.Ports, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                          SelectedItem="{Binding DestinationPort, UpdateSourceTrigger=PropertyChanged}"
+                                                          DisplayMemberPath="Name"
+                                                          FontSize="13"
+                                                          Width="200"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    
+                                    <DataGridTemplateColumn Header="Компания отправитель">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding SendingCompany.Name}" FontSize="13" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <ComboBox ItemsSource="{Binding DataContext.Clients, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                          SelectedItem="{Binding SendingCompany, UpdateSourceTrigger=PropertyChanged}"
+                                                          DisplayMemberPath="Name"
+                                                          FontSize="13" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn Header="Компания получатель">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ReceivingCompany.Name}" FontSize="13" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <ComboBox ItemsSource="{Binding DataContext.Clients, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                          SelectedItem="{Binding ReceivingCompany, UpdateSourceTrigger=PropertyChanged}"
+                                                          DisplayMemberPath="Name"
+                                                          FontSize="13" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+                                    
+                                    <DataGridTextColumn Binding="{Binding CustomsBatchNumber}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock FontSize="13">
+                                                Таможенный 
+                                                <LineBreak/>
+                                                номер партии
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                    
+                                    <DataGridTextColumn Binding="{Binding CustomsDeclarationNumber}">
+                                        <DataGridTextColumn.Header>
+                                            <TextBlock FontSize="13">
+                                                Номер
+                                                <LineBreak/>
+                                                таможенной
+                                                <LineBreak/>
+                                                декларации
+                                            </TextBlock>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <StackPanel Orientation="Horizontal" Margin="30, 30, 30, 30"
+                                        HorizontalAlignment="Right">
+                                <Button Content="Добавить партию груза"
+                                        Command="{Binding CreateShipmentButton}"
+                                        FontSize="17"
+                                        Margin="0, 0, 30, 0"
+                                        Background="Green"
+                                        IsEnabled="{Binding IsSelectedShipmentForClient}"/>
+                                <Button Content="Сохранить изменения"
+                                        Command="{Binding SaveChangesShipmentButton}"
+                                        FontSize="17"
+                                        Margin="0, 0, 30, 0"
+                                        IsEnabled="{Binding IsSelectedShipmentForClient}"/>
+                                <Button Content="Удалить партию груза"
+                                        Command="{Binding DeleteShipmentButton}"
+                                        FontSize="17"
+                                        Style="{StaticResource MaterialDesignRaisedButton}"
+                                        Background="Red"
+                                        IsEnabled="{Binding IsSelectedShipmentForClient}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Грузы, входящие в партию груза"
+                             IsEnabled="{Binding IsSelectedCargo}">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Orientation="Vertical">
+                                <DataGrid ItemsSource="{Binding CargoesForShipment}"
+                                          SelectedItem="{Binding SelectedCargo}"
+                                          HorizontalAlignment="Right"
+                                          Margin="20, 30, 30, 0"
+                                          FontSize="13"
+                                          AutoGenerateColumns="False" 
+                                          CanUserAddRows="False" 
+                                          IsReadOnly="False"
+                                          Height="400"> <!-- Установлено ограничение по высоте -->
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Binding="{Binding Id}">
+                                            <DataGridTextColumn.Header>
+                                                <TextBlock FontSize="13">
+                                                    Идентификационный
+                                                    <LineBreak/>
+                                                    номер груза
+                                                </TextBlock>
+                                            </DataGridTextColumn.Header>
+                                        </DataGridTextColumn>
+                                        
+                                        <DataGridTextColumn Binding="{Binding Name}">
+                                            <DataGridTextColumn.Header>
+                                                <TextBlock FontSize="13">
+                                                    Название 
+                                                    <LineBreak/>
+                                                    груза
+                                                </TextBlock>
+                                            </DataGridTextColumn.Header>
+                                        </DataGridTextColumn>
+                                        
+                                        <DataGridTextColumn Binding="{Binding TypeOfCargo.Name}">
+                                            <DataGridTextColumn.Header>
+                                                <TextBlock FontSize="13">
+                                                    Тип
+                                                    <LineBreak/>
+                                                    груза
+                                                </TextBlock>
+                                            </DataGridTextColumn.Header>
+                                        </DataGridTextColumn>
+                                        
+                                        <DataGridTextColumn>
+                                            <DataGridTextColumn.Header>
+                                                <TextBlock FontSize="15">
+                                                    Заявленная
+                                                    <LineBreak/>
+                                                    величина груза
+                                                </TextBlock>
+                                            </DataGridTextColumn.Header>
+                                            <DataGridTextColumn.Binding>
+                                                <MultiBinding StringFormat="{}{0} {1}">
+                                                    <!-- Первое значение - величина груза -->
+                                                    <Binding Path="InsuredCargo" />
+                                                    <!-- Второе значение - единица измерения -->
+                                                    <Binding Path="UnitOfMeasurement.Name" />
+                                                </MultiBinding>
+                                            </DataGridTextColumn.Binding>
+                                        </DataGridTextColumn>
+
+                                        <DataGridTextColumn>
+                                            <DataGridTextColumn.Header>
+                                                <TextBlock FontSize="15">
+                                                    Застрахованная 
+                                                    <LineBreak/>
+                                                    величина груза
+                                                </TextBlock>
+                                            </DataGridTextColumn.Header>
+                                            <DataGridTextColumn.Binding>
+                                                <MultiBinding StringFormat="{}{0} {1}">
+                                                    <!-- Первое значение - величина груза -->
+                                                    <Binding Path="DeclaredCargo" />
+                                                    <!-- Второе значение - единица измерения -->
+                                                    <Binding Path="UnitOfMeasurement.Name" />
+                                                </MultiBinding>
+                                            </DataGridTextColumn.Binding>
+                                        </DataGridTextColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <StackPanel Orientation="Horizontal" Margin="30, 30, 30, 30"
+                                            HorizontalAlignment="Right">
+                                    <Button Content="Добавить груз"
+                                            Command="{Binding CreateCargoButton}"
+                                            Style="{StaticResource MaterialDesignRaisedButton}"
+                                            FontSize="17"
+                                            Margin="0, 0, 30, 0"
+                                            Background="Green"
+                                            IsEnabled="{Binding IsSelectedShipmentForClient}"/>
+                                    <Button Content="Сохранить изменения"
+                                            Command="{Binding SaveChangesCargoButton}"
+                                            FontSize="17"
+                                            Style="{StaticResource MaterialDesignRaisedButton}"
+                                            Margin="0, 0, 30, 0"
+                                            IsEnabled="{Binding IsSelectedShipmentForClient}"/>
+                                    <Button Content="Удалить груз"
+                                            FontSize="17"
+                                            Command="{Binding DeleteCargoButton}"
+                                            Style="{StaticResource MaterialDesignRaisedButton}"
+                                            Background="Red"
+                                            IsEnabled="{Binding IsSelectedShipmentForClient}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>
